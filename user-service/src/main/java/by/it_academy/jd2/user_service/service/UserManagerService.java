@@ -4,6 +4,7 @@ import by.it_academy.jd2.user_service.dto.PageDTO;
 import by.it_academy.jd2.user_service.dto.PaginationDTO;
 import by.it_academy.jd2.user_service.dto.UserCreateDTO;
 import by.it_academy.jd2.user_service.dto.UserDTO;
+import by.it_academy.jd2.user_service.exception.DataChangedException;
 import by.it_academy.jd2.user_service.exception.MailAlreadyExistException;
 import by.it_academy.jd2.user_service.service.api.IUserManagerService;
 import by.it_academy.jd2.user_service.service.api.IUserService;
@@ -13,6 +14,7 @@ import by.it_academy.jd2.user_service.storage.entity.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -62,15 +64,20 @@ public class UserManagerService implements IUserManagerService {
 
 
     @Override
+    @Transactional
     public void updateUser(UUID uuid, long dtUpdate, UserCreateDTO userCreateDTO) {
 
         UserEntity userEntity = userService.getById(uuid);
+
+        if (userEntity.getDtUpdate().toEpochSecond(ZoneOffset.UTC) != dtUpdate) {
+            throw new DataChangedException();
+        }
+
         userEntity.setMail(userCreateDTO.getMail());
         userEntity.setFio(userCreateDTO.getFio());
         userEntity.setRole(UserRole.valueOf(userCreateDTO.getRole()));
         userEntity.setStatus(UserStatus.valueOf(userCreateDTO.getStatus()));
         userEntity.setPassword(encoder.encode(userCreateDTO.getPassword()));
-        userEntity.setDtUpdate(new Timestamp(dtUpdate));
 
         userService.saveUser(userEntity);
 
