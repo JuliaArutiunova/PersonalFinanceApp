@@ -1,0 +1,32 @@
+spring:
+  application:
+   name: user-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/users
+    username: postgres
+    password: 13245
+    hikari:
+      maximum-pool-size: 50
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: javatest333@yandex.by
+    password: ifxuokbybugqevmr
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true # sender!
+app:
+  jwt:
+    secret: NmIxNTkwNWUtYWQwZS00ZGM4LWE4MzctZjdlNDQ4ZTllMDlh
+    issuer: ITAcademy
+
