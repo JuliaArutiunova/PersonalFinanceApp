@@ -24,7 +24,6 @@ public class UserService implements IUserService {
     private final IUserStorage userStorage;
     private final UserMapper userMapper;
     private final MailSenderService mailSenderService;
-
     private final Generator generator;
 
     public UserService(IUserStorage userStorage, UserMapper userMapper,
@@ -57,7 +56,9 @@ public class UserService implements IUserService {
 
     @Override
     public UserEntity getById(UUID id) {
-        return userStorage.getReferenceById(id);
+        return userStorage.findById(id)
+                .orElseThrow(() ->
+                        new UserNotFoundException("Пользователь с id " + id + " Не найден"));
     }
 
     @Override
