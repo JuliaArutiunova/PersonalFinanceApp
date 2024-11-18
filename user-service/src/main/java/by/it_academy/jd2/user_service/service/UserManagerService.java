@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Service
@@ -40,8 +40,6 @@ public class UserManagerService implements IUserManagerService {
                 .password(encoder.encode(userCreateDTO.getPassword()))
                 .status(UserStatus.valueOf(userCreateDTO.getStatus()))
                 .role(UserRole.valueOf(userCreateDTO.getRole()))
-                .dtCreate(new Timestamp(System.currentTimeMillis()))
-                .dtUpdate(new Timestamp(System.currentTimeMillis()))
                 .build();
         if (userEntity.getStatus().equals(UserStatus.WAITING_ACTIVATION)) {
             String code = userService.generateActivationCode();
