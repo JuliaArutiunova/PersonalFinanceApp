@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -32,11 +32,11 @@ public class UserEntity {
     private String password;
 
     @Column(name = "dt_create")
-    private Timestamp dtCreate;
+    private LocalDateTime dtCreate;
 
     @Version
     @Column(name = "dt_update")
-    private Timestamp dtUpdate;
+    private LocalDateTime dtUpdate;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -48,4 +48,10 @@ public class UserEntity {
 
     @Column(name = "code")
     private String activationCode;
+
+    @PrePersist
+    private void prePersist(){
+        this.dtCreate = LocalDateTime.now();
+        this.dtUpdate = this.dtCreate;
+    }
 }
