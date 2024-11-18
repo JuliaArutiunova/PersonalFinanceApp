@@ -24,9 +24,10 @@ import java.util.UUID;
 @Service
 public class AuthenticationService implements IAuthenticationService {
     @Autowired
-    IUserService userService;
+    private IUserService userService;
     @Autowired
     private PasswordEncoder encoder;
+    private UserHolder userHolder;
 
 
     @Override
@@ -88,7 +89,7 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     public UserDTO getMe() {
 
-        UUID id = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID id = userHolder.getUserId();
 
         return userService.getUserInfoById(id);
     }
