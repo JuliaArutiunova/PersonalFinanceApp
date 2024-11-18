@@ -7,6 +7,7 @@ import by.it_academy.jd2.user_service.storage.projection.UserProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 @Component
@@ -15,8 +16,8 @@ public class UserMapper {
     public UserDTO mapEntityToDto(UserEntity userEntity) {
         return UserDTO.builder()
                 .id(userEntity.getUserId())
-                .dtCreate(userEntity.getDtCreate().getTime())
-                .dtUpdate(userEntity.getDtUpdate().getTime())
+                .dtCreate(userEntity.getDtCreate().toEpochSecond(ZoneOffset.UTC))
+                .dtUpdate(userEntity.getDtUpdate().toEpochSecond(ZoneOffset.UTC))
                 .mail(userEntity.getMail())
                 .fio(userEntity.getFio())
                 .role(userEntity.getRole())
@@ -31,8 +32,8 @@ public class UserMapper {
                 .id(userProjection.getUserId())
                 .fio(userProjection.getFio())
                 .mail(userProjection.getMail())
-                .dtCreate(userProjection.getDtCreate().getTime())
-                .dtUpdate(userProjection.getDtUpdate().getTime())
+                .dtCreate(userProjection.getDtCreate().toEpochSecond(ZoneOffset.UTC))
+                .dtUpdate(userProjection.getDtUpdate().toEpochSecond(ZoneOffset.UTC))
                 .role(userProjection.getRole())
                 .status(userProjection.getStatus())
                 .build();
