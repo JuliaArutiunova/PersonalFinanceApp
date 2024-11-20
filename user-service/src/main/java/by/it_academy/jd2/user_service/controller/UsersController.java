@@ -4,9 +4,8 @@ import by.it_academy.jd2.user_service.dto.PageDTO;
 import by.it_academy.jd2.user_service.dto.PaginationDTO;
 import by.it_academy.jd2.user_service.dto.UserCreateDTO;
 import by.it_academy.jd2.user_service.dto.UserDTO;
-import by.it_academy.jd2.user_service.service.api.IUserManagerService;
+import by.it_academy.jd2.user_service.service.api.IUserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +15,18 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/users")
 public class UsersController {
-    @Autowired
-    private IUserManagerService userManagerService;
+
+
+    private final IUserService userService;
+
+    public UsersController(IUserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
     public ResponseEntity<Void> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
-        userManagerService.createUser(userCreateDTO);
+        userService.save(userCreateDTO);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -31,7 +35,7 @@ public class UsersController {
     @GetMapping
     public ResponseEntity<PageDTO<UserDTO>> getUserPage(@Valid PaginationDTO paginationDTO) {
 
-        PageDTO<UserDTO> usersPageDTO = userManagerService.getUsersPage(paginationDTO);
+        PageDTO<UserDTO> usersPageDTO = userService.getUsersPage(paginationDTO.getPage(), paginationDTO.getSize());
 
         return new ResponseEntity<>(usersPageDTO, HttpStatus.OK);
     }
@@ -39,7 +43,7 @@ public class UsersController {
     @GetMapping("/{uuid}")
     public ResponseEntity<UserDTO> getUser(@PathVariable("uuid") UUID uuid) {
 
-        UserDTO userDTO = userManagerService.getById(uuid);
+        UserDTO userDTO = userService.getUserInfoById(uuid);
 
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
@@ -50,7 +54,7 @@ public class UsersController {
                                              @Valid
                                              @RequestBody UserCreateDTO userCreateDTO) {
 
-        userManagerService.updateUser(uuid, dtUpdate, userCreateDTO);
+        userService.update(uuid, dtUpdate, userCreateDTO);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
