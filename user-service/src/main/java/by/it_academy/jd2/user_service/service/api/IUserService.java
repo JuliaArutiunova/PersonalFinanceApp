@@ -1,9 +1,6 @@
 package by.it_academy.jd2.user_service.service.api;
 
-import by.it_academy.jd2.user_service.dto.PageDTO;
-import by.it_academy.jd2.user_service.dto.UserDTO;
-import by.it_academy.jd2.user_service.storage.entity.UserEntity;
-import by.it_academy.jd2.user_service.storage.projection.UserLoginProjection;
+import by.it_academy.jd2.user_service.dto.*;
 
 import java.util.UUID;
 
@@ -13,19 +10,15 @@ public interface IUserService {
 
     UserDTO getUserInfoById(UUID id);
 
-    UserEntity getById(UUID id);
+    void save(UserCreateDTO userCreateDTO);
 
-    UserEntity getByMail(String mail);
+    void update(UUID uuid, long dtUpdate, UserCreateDTO userCreateDTO);
 
-    void saveUser(UserEntity userEntity);
+    void verifyUser(String code, String mail);
 
-    boolean isExists(String mail);
+    TokenInfoDTO getTokenInfo(UserLoginDTO loginDTO);
 
-    void sendVerification(String userName, String mail, String code);
 
-    UserLoginProjection getUserLoginInfo(String mail);
-
-    String generateActivationCode();
 
 
 }
