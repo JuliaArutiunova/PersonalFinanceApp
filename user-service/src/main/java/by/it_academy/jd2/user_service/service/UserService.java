@@ -5,14 +5,18 @@ import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.exception.PageNotExistException;
 import by.it_academy.jd2.user_service.exception.UserNotFoundException;
 import by.it_academy.jd2.user_service.service.api.IUserService;
+import by.it_academy.jd2.user_service.service.api.IVerificationService;
 import by.it_academy.jd2.user_service.service.mapper.UserMapper;
-import by.it_academy.jd2.user_service.service.utils.Generator;
 import by.it_academy.jd2.user_service.storage.api.IUserStorage;
 import by.it_academy.jd2.user_service.storage.entity.UserEntity;
+import by.it_academy.jd2.user_service.storage.entity.UserRole;
+import by.it_academy.jd2.user_service.storage.entity.UserStatus;
+import by.it_academy.jd2.user_service.storage.entity.VerificationEntity;
 import by.it_academy.jd2.user_service.storage.projection.UserLoginProjection;
 import by.it_academy.jd2.user_service.storage.projection.UserProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -22,16 +26,18 @@ import java.util.UUID;
 public class UserService implements IUserService {
 
     private final IUserStorage userStorage;
+    private final IVerificationService verificationService;
     private final UserMapper userMapper;
-    private final MailSenderService mailSenderService;
-    private final Generator generator;
+    private final PasswordEncoder encoder;
 
-    public UserService(IUserStorage userStorage, UserMapper userMapper,
-                       MailSenderService mailSenderService, Generator generator) {
+
+
+    public UserService(IUserStorage userStorage, IVerificationService verificationService,
+                       UserMapper userMapper, PasswordEncoder encoder) {
         this.userStorage = userStorage;
+        this.verificationService = verificationService;
         this.userMapper = userMapper;
-        this.mailSenderService = mailSenderService;
-        this.generator = generator;
+        this.encoder = encoder;
     }
 
 
