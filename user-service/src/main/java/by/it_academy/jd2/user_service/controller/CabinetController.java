@@ -1,11 +1,13 @@
 package by.it_academy.jd2.user_service.controller;
 
 
-import by.it_academy.jd2.user_service.controller.utils.JwtTokenHandler;
-import by.it_academy.jd2.user_service.dto.*;
+import by.it_academy.jd2.user_service.dto.UserDTO;
+import by.it_academy.jd2.user_service.dto.UserLoginDTO;
+import by.it_academy.jd2.user_service.dto.UserRegistrationDTO;
+import by.it_academy.jd2.user_service.dto.VerificationDTO;
 import by.it_academy.jd2.user_service.service.api.IAuthenticationService;
+import by.it_academy.jd2.user_service.service.api.IUserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,24 +20,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/cabinet")
 public class CabinetController {
 
-    @Autowired
-    IAuthenticationService authenticationService;
-    @Autowired
-    JwtTokenHandler jwtTokenHandler;
 
+    private final IAuthenticationService authenticationService;
+
+    private final IUserService userService;
+
+    public CabinetController(IAuthenticationService authenticationService, IUserService userService) {
+        this.authenticationService = authenticationService;
+        this.userService = userService;
+    }
 
     @PostMapping("/registration")
     public ResponseEntity<Void> registration(@Valid @RequestBody UserRegistrationDTO registrationDTO) {
 
         authenticationService.registerUser(registrationDTO);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED); //ResponseStatus аннотация
     }
 
     @GetMapping("/verification")
     public ResponseEntity<Void> verification(@Valid VerificationDTO verificationDTO) {
 
-        authenticationService.verifyUser(verificationDTO.getCode(), verificationDTO.getMail());
+        userService.verifyUser(verificationDTO.getCode(), verificationDTO.getMail());
+
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -43,9 +50,7 @@ public class CabinetController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
 
-        TokenInfoDTO tokenInfoDTO = authenticationService.login(userLoginDTO);
-
-        String token = jwtTokenHandler.generateToken(tokenInfoDTO);
+        String token = authenticationService.getToken(userLoginDTO);
 
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
