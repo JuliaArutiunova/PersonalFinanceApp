@@ -6,12 +6,14 @@ import by.it_academy.jd2.user_service.validation.EnumValue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class UserCreateDTO {
 
     @NotBlank(message = "Поле не заполнено")
