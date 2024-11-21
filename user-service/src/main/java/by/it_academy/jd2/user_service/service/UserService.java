@@ -1,7 +1,12 @@
 package by.it_academy.jd2.user_service.service;
 
-import by.it_academy.jd2.user_service.dto.*;
-import by.it_academy.jd2.user_service.exception.*;
+import by.it_academy.jd2.user_service.dto.TokenInfoDTO;
+import by.it_academy.jd2.user_service.dto.UserCreateDTO;
+import by.it_academy.jd2.user_service.dto.UserDTO;
+import by.it_academy.jd2.user_service.dto.UserLoginDTO;
+import by.it_academy.jd2.user_service.exception.CodeNotValidException;
+import by.it_academy.jd2.user_service.exception.DataChangedException;
+import by.it_academy.jd2.user_service.exception.PasswordNotValidException;
 import by.it_academy.jd2.user_service.service.api.IUserService;
 import by.it_academy.jd2.user_service.service.api.IVerificationService;
 import by.it_academy.jd2.user_service.service.mapper.UserMapper;
@@ -51,7 +56,7 @@ public class UserService implements IUserService {
         Page<UserProjection> page = userStorage.findAllProjectedBy(PageRequest.of(pageNumber, size));
 
         if (pageNumber > page.getNumber()) {
-            throw new PageNotExistException(pageNumber);
+            throw new PageNotExistException("Страницы с номером " + pageNumber + " не существует");
         }
 
         return userMapper.mapPageToDTO(page);
@@ -61,8 +66,10 @@ public class UserService implements IUserService {
     @Override
     @Transactional(readOnly = true)
     public UserDTO getUserInfoById(UUID id) {
+
         UserProjection userProjection = userStorage.findUserProjectionByUserId(id).orElseThrow(() ->
-                new UserNotFoundException("Пользователь с id " + id + " Не найден"));
+                new RecordNotFoundException("Пользователь не найден"));
+
         return userMapper.mapUserProjectionToDTO(userProjection);
     }
 
@@ -70,10 +77,12 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void save(UserCreateDTO userCreateDTO) {
+
         String userMail = userCreateDTO.getMail();
 
         if (userStorage.existsByMail(userMail)) {
-            throw new MailAlreadyExistException(userCreateDTO.getMail());
+            throw new RecordAlreadyExistException("Пользователь с email " + userCreateDTO.getMail()
+                    + " уже существует");
         }
 
         UserEntity userEntity = UserEntity.builder()
@@ -97,7 +106,7 @@ public class UserService implements IUserService {
     @Transactional
     public void update(UUID uuid, long dtUpdate, UserCreateDTO userCreateDTO) {
         UserEntity userEntity = userStorage.findById(uuid).orElseThrow(() ->
-                new UserNotFoundException("Пользователь с id " + uuid + " Не найден"));
+                new RecordNotFoundException("Пользователь не найден"));
 
         if (userEntity.getDtUpdate().toEpochSecond(ZoneOffset.UTC) != dtUpdate) {
             throw new DataChangedException();
@@ -114,7 +123,12 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public void verifyUser(String code, String mail) {
+    public void verifyUser(String code, String mail) { //TODO название
+
+        if (!userStorage.existsByMail(mail)) {
+            throw new RecordNotFoundException("Пользователь с email " + mail + " не найден");
+        }
+
         VerificationEntity verification = verificationService.get(mail);
         UserEntity userEntity = verification.getUserEntity();
 
@@ -131,12 +145,13 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public TokenInfoDTO getTokenInfo(UserLoginDTO loginDTO) {
+    public TokenInfoDTO getTokenInfo(UserLoginDTO loginDTO) { //TODO название
+
         UserLoginProjection userInfo = userStorage.findUserLoginProjectionByMail(loginDTO.getMail()).orElseThrow(() ->
-                new UserNotFoundException("Пользователь с email " + loginDTO.getMail() + " не найден"));
+                new RecordNotFoundException("Пользователь с email " + loginDTO.getMail() + " не найден"));
 
         if (!encoder.matches(loginDTO.getPassword(), userInfo.getPassword())) {
-            throw new PasswordNotValidException();
+            throw new PasswordNotValidException("Неверный пароль");
         }
 
         return new TokenInfoDTO(userInfo.getUserId().toString(), userInfo.getRole().name());

@@ -20,7 +20,8 @@ public class VerificationService implements IVerificationService {
 
     private final IVerificationDAO verificationDAO;
 
-    public VerificationService(Generator generator, MailSenderService mailSenderService, IVerificationDAO verificationDAO) {
+    public VerificationService(Generator generator, MailSenderService mailSenderService,
+                               IVerificationDAO verificationDAO) {
         this.generator = generator;
         this.mailSenderService = mailSenderService;
         this.verificationDAO = verificationDAO;
@@ -46,7 +47,7 @@ public class VerificationService implements IVerificationService {
     @Transactional(readOnly = true)
     public VerificationEntity get(String mail) {
         return verificationDAO.findVerificationByUserMail(mail).orElseThrow(() ->
-                new UserNotFoundException("Пользователь с email " + mail + " не был найден"));
+                new RecordNotFoundException("Данные для верификации пользователя не былы найдены"));
     }
 
     @Override
