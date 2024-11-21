@@ -46,8 +46,6 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @Column(name = "code")
-    private String activationCode;
 
     @PrePersist
     private void prePersist(){
