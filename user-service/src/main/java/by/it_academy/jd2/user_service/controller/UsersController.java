@@ -1,7 +1,7 @@
 package by.it_academy.jd2.user_service.controller;
 
-import by.it_academy.jd2.user_service.dto.PageDTO;
-import by.it_academy.jd2.user_service.dto.PaginationDTO;
+import by.it_academy.lib.dto.PageDTO;
+import by.it_academy.lib.dto.PaginationDTO;
 import by.it_academy.jd2.user_service.dto.UserCreateDTO;
 import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.service.api.IUserService;

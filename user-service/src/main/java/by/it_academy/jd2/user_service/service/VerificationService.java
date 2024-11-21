@@ -1,6 +1,6 @@
 package by.it_academy.jd2.user_service.service;
 
-import by.it_academy.jd2.user_service.exception.UserNotFoundException;
+import by.it_academy.lib.exception.RecordNotFoundException;
 import by.it_academy.jd2.user_service.service.api.IVerificationService;
 import by.it_academy.jd2.user_service.service.utils.Generator;
 import by.it_academy.jd2.user_service.storage.api.IVerificationDAO;

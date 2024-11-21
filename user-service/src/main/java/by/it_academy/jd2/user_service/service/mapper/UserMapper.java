@@ -1,6 +1,6 @@
 package by.it_academy.jd2.user_service.service.mapper;
 
-import by.it_academy.jd2.user_service.dto.PageDTO;
+import by.it_academy.lib.dto.PageDTO;
 import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.storage.entity.UserEntity;
 import by.it_academy.jd2.user_service.storage.projection.UserProjection;
