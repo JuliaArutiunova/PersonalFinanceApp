@@ -38,11 +38,11 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(requests ->
                 requests.requestMatchers(HttpMethod.POST,
-                                "/classifier/currency").hasAnyRole("ADMIN")
+                                "/classifier/currency").hasAnyRole("ADMIN","MANAGER")
                         .requestMatchers(HttpMethod.GET,
                                 "/classifier/currency").permitAll()
                         .requestMatchers(HttpMethod.POST,
-                                "/classifier/operation/category").hasAnyRole("ADMIN")
+                                "/classifier/operation/category").hasAnyRole("ADMIN","MANAGER")
                         .requestMatchers(HttpMethod.GET,
                                 "/classifier/operation/category").permitAll()
                         .anyRequest().authenticated()
