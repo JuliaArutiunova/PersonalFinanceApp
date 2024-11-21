@@ -35,7 +35,6 @@ public class UserService implements IUserService {
     private final PasswordEncoder encoder;
 
 
-
     public UserService(IUserStorage userStorage, IVerificationService verificationService,
                        UserMapper userMapper, PasswordEncoder encoder) {
         this.userStorage = userStorage;
@@ -46,7 +45,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public PageDTO<UserDTO> getUsersPage(int pageNumber, int size) {
 
         Page<UserProjection> page = userStorage.findAllProjectedBy(PageRequest.of(pageNumber, size));
@@ -60,7 +59,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDTO getUserInfoById(UUID id) {
         UserProjection userProjection = userStorage.findUserProjectionByUserId(id).orElseThrow(() ->
                 new UserNotFoundException("Пользователь с id " + id + " Не найден"));

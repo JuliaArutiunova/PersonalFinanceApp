@@ -27,7 +27,7 @@ public class VerificationService implements IVerificationService {
     }
 
     @Override
-    @Transactional //проверки
+    @Transactional 
     public void create(UserEntity userEntity) {
         String code = generator.generateCode(10);
 
@@ -43,7 +43,7 @@ public class VerificationService implements IVerificationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public VerificationEntity get(String mail) {
         return verificationDAO.findVerificationByUserMail(mail).orElseThrow(() ->
                 new UserNotFoundException("Пользователь с email " + mail + " не был найден"));
