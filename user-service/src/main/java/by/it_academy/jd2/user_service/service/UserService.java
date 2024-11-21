@@ -96,7 +96,7 @@ public class UserService implements IUserService {
         userStorage.saveAndFlush(userEntity);
 
         if (userEntity.getStatus().equals(UserStatus.WAITING_ACTIVATION)) {
-                verificationService.create(userEntity);
+            verificationService.create(userEntity);
         }
 
 
@@ -105,6 +105,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void update(UUID uuid, long dtUpdate, UserCreateDTO userCreateDTO) {
+
         UserEntity userEntity = userStorage.findById(uuid).orElseThrow(() ->
                 new RecordNotFoundException("Пользователь не найден"));
 
@@ -130,16 +131,15 @@ public class UserService implements IUserService {
         }
 
         VerificationEntity verification = verificationService.get(mail);
-        UserEntity userEntity = verification.getUserEntity();
 
         if (verification.getCode().equals(code)) {
+            UserEntity userEntity = verification.getUserEntity();
             userEntity.setStatus(UserStatus.ACTIVATED);
             userStorage.saveAndFlush(userEntity);
-
             verificationService.delete(verification);
 
         } else {
-            throw new CodeNotValidException();
+            throw new CodeNotValidException("Неверный код верификации");
         }
     }
 
@@ -156,7 +156,6 @@ public class UserService implements IUserService {
 
         return new TokenInfoDTO(userInfo.getUserId().toString(), userInfo.getRole().name());
     }
-
 
 
 }
