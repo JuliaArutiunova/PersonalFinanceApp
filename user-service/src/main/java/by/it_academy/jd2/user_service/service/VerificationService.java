@@ -29,7 +29,7 @@ public class VerificationService implements IVerificationService {
     @Override
     @Transactional //проверки
     public void create(UserEntity userEntity) {
-        String code = generator.generateCode();
+        String code = generator.generateCode(10);
 
         verificationDAO.saveAndFlush(VerificationEntity.builder()
                 .verificationId(UUID.randomUUID())

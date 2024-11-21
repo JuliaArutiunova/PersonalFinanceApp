@@ -8,8 +8,7 @@ import java.util.Random;
 @Component
 public class Generator {
 
-    private int numberOfSymbols = 10;
-    private String symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+    private static final String SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
     private String url = "http://localhost:8080/cabinet/verification"; //TODO в настройки
 
 
@@ -27,11 +26,11 @@ public class Generator {
     }
 
 
-    public String generateCode() {
+    public String generateCode(int numberOfSymbols) {
         StringBuilder stringBuilder = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < numberOfSymbols; i++) {
-            stringBuilder.append(symbols.charAt(random.nextInt(symbols.length())));
+            stringBuilder.append(SYMBOLS.charAt(random.nextInt(SYMBOLS.length())));
         }
         return stringBuilder.toString();
     }
