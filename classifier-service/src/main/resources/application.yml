@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: classifier-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/classifier
+    username: postgres
+    password: 13245
+    hikari:
+      maximum-pool-size: 50
+
+app:
+  jwt:
+    secret: NmIxNTkwNWUtYWQwZS00ZGM4LWE4MzctZjdlNDQ4ZTllMDlh
+    issuer: ITAcademy
