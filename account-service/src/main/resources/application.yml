@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: account-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/account
+    username: postgres
+    password: 13245
+    hikari:
+      maximum-pool-size: 15
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+
+app:
+  jwt:
+    secret: NmIxNTkwNWUtYWQwZS00ZGM4LWE4MzctZjdlNDQ4ZTllMDlh
+    issuer: ITAcademy
+
+client:
+  currency-api:
+    url: https://api.currencyapi.com/v3/latest
+    key: cur_live_BiQWsl5AFQDOQJ22KCABuZGKz2MbADW772GLjzRU
+
+  classifier-service:
+    url: http://localhost:8090/classifier_data/currency
