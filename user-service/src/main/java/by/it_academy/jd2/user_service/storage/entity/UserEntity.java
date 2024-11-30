@@ -42,7 +42,7 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(columnDefinition = "status")
+    @Column
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
