@@ -43,13 +43,14 @@ public class CurrencyService implements ICurrencyService {
         if (currencyDAO.existsByTitle(title)) {
             throw new RecordAlreadyExistException("Валюта с названием " + title + " уже существует");
         }
-
-        currencyDAO.saveAndFlush(CurrencyEntity.builder()
+        CurrencyEntity currencyEntity = CurrencyEntity.builder()
                 .id(UUID.randomUUID())
                 .title(title)
                 .description(currencyCreateDTO.getDescription())
-                .build());
+                .build();
+        currencyDAO.saveAndFlush(currencyEntity);
 
+        clientService.saveCurrencyInAccount(currencyEntity.getId());
     }
 
     @Override
