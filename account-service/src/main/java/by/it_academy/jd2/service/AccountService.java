@@ -69,7 +69,7 @@ public class AccountService implements IAccountService {
     @Transactional(readOnly = true)
     public PageDTO<AccountDTO> getAccountInfo(int page, int size) {
         UUID userId = userHolder.getUserId();
-        Page<AccountEntity> accountEntityPage = accountDao.findAllByUserId(userId, PageRequest.of(page, size));
+        Page<AccountEntity> accountEntityPage = accountDao.findAllByUser(userId, PageRequest.of(page, size));
 
         if (page > accountEntityPage.getTotalPages() - 1) {
             throw new PageNotExistException("Страницы с таким номером не существует");

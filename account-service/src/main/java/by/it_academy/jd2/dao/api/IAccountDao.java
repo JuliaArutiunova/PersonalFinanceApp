@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface IAccountDao extends JpaRepository<AccountEntity, UUID> {
 
-    Page<AccountEntity> findAllByUserId(UUID id, Pageable pageable);
+    Page<AccountEntity> findAllByUser(UUID id, Pageable pageable);
 }
