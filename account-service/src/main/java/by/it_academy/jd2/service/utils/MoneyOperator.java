@@ -39,7 +39,7 @@ public class MoneyOperator {
         CurrencyNamesDTO currencyNames =
                 clientService.getCurrencyNames(currency, accountCurrency);
         Double exchangeRate =
-                clientService.getExchangeRate(currencyNames.getOperationCurrencyName(),
+                clientService.getExchangeRate(currencyNames.getCurrencyName(),
                         currencyNames.getAccountCurrencyName());
 
         return BigDecimal.valueOf(value).multiply(BigDecimal.valueOf(exchangeRate))
@@ -65,7 +65,7 @@ public class MoneyOperator {
         CurrencyNamesDTO currencyNames =
                 clientService.getCurrencyNames(currency, accountCurrency);
         Double exchangeRate =
-                clientService.getExchangeRate(currencyNames.getOperationCurrencyName(),
+                clientService.getExchangeRate(currencyNames.getCurrencyName(),
                         currencyNames.getAccountCurrencyName());
         return BigDecimal.valueOf(value).multiply(BigDecimal.valueOf(exchangeRate));
     }
