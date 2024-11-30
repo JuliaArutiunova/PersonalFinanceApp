@@ -1,0 +1,336 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Управление личными финансами
+  contact:
+    name: ITAcademy
+    url: http://it-academy.by
+
+servers:
+  - url: http://{host}:{port}
+    description: custom server
+    variables:
+      host:
+        description: host name
+        default: localhost
+      port:
+        description: port value
+        default: "80"
+
+tags:
+  - name: "Пользователи"
+    description: "Информация о пользователях системы"
+  - name: "Личный кабинет"
+    description: "Доступ к личному кабинету"
+
+paths:
+  /api/v1/users:
+    post:
+      tags:
+        - "Пользователи"
+      summary: "Добавление нового пользователя"
+      security:
+        - bearerAuth: [ADMIN]
+      requestBody:
+        $ref: "#/components/requestBodies/CreateUser"
+      responses:
+        '201':
+          description: "Пользователь добавлен"
+        '400':
+          $ref: '../../common-lib.yml#/components/responses/Bad_Request'
+        '401':
+          $ref: '../../common-lib.yml#/components/responses/Unauthorized'
+        '403':
+          $ref: '../../common-lib.yml#/components/responses/Forbidden'
+        '500':
+          $ref: '../../common-lib.yml#/components/responses/Internal_Server_Error'
+    get:
+      tags:
+        - "Пользователи"
+      summary: "Получить страницу пользователей"
+      security:
+        - bearerAuth: [ADMIN]
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Номер страницы
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+          description: Размер страницы
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfUser'
+        '400':
+          $ref: '../../common-lib.yml#/components/responses/Bad_Request'
+        '401':
+          $ref: '../../common-lib.yml#/components/responses/Unauthorized'
+        '403':
+          $ref: '../../common-lib.yml#/components/responses/Forbidden'
+        '500':
+          $ref: '../../common-lib.yml#/components/responses/Internal_Server_Error'
+  /api/v1/users/{uuid}:
+    get:
+      tags:
+        - "Пользователи"
+      summary: "Получить информацию о пользователе"
+      security:
+        - bearerAuth: [ADMIN]
+      parameters:
+        - in: path
+          name: uuid
+          description: "Идентификатор пользователя"
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '../../common-lib.yml#/components/responses/Bad_Request'
+        '401':
+          $ref: '../../common-lib.yml#/components/responses/Unauthorized'
+        '403':
+          $ref: '../../common-lib.yml#/components/responses/Forbidden'
+        '500':
+          $ref: '../../common-lib.yml#/components/responses/Internal_Server_Error'
+  /api/v1/users/{uuid}/dt_update/{dt_update}:
+    put:
+      tags:
+        - "Пользователи"
+      summary: "Редактировать информацию о пользователе"
+      security:
+        - bearerAuth: [ADMIN]
+      parameters:
+        - in: path
+          name: uuid
+          description: "Идентификатор пользователя"
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: dt_update
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: "Дата последнего обновления записи"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateUser"
+      responses:
+        '200':
+          description: "Пользователь обновлён"
+        '400':
+          $ref: '../../common-lib.yml#/components/responses/Bad_Request'
+        '401':
+          $ref: '../../common-lib.yml#/components/responses/Unauthorized'
+        '403':
+          $ref: '../../common-lib.yml#/components/responses/Forbidden'
+        '500':
+          $ref: '../../common-lib.yml#/components/responses/Internal_Server_Error'
+  /api/v1/cabinet/registration:
+    post:
+      tags:
+        - "Личный кабинет"
+      summary: "Самостоятельная регистрация пользователя"
+      requestBody:
+        $ref: "#/components/requestBodies/RegistrationUser"
+      responses:
+        '201':
+          description: "Пользователь зарегистрирован"
+        '400':
+          $ref: '../../common-lib.yml#/components/responses/Bad_Request'
+        '500':
+          $ref: '../../common-lib.yml#/components/responses/Internal_Server_Error'
+  /api/v1/cabinet/verification:
+    get:
+      tags:
+        - "Личный кабинет"
+      summary: "Верификация самостоятельного зарегистрированного пользователя"
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          description: Код верификации подтверждающий доступ к почтовому адресу
+          required: true
+        - in: query
+          name: mail
+          schema:
+            type: string
+          description: Электронная почта для которой был выдан код верификации
+          required: true
+      responses:
+        '200':
+          description: "Пользователь верифицирован"
+        '400':
+          $ref: '../../common-lib.yml#/components/responses/Bad_Request'
+        '500':
+          $ref: '../../common-lib.yml#/components/responses/Internal_Server_Error'
+  /api/v1/cabinet/login:
+    post:
+      tags:
+        - "Личный кабинет"
+      summary: "Вход"
+      requestBody:
+        $ref: "#/components/requestBodies/LoginUser"
+      responses:
+        '200':
+          description: "Вход выполнен. Токен для Authorization Header"
+          content:
+            application/jwt:
+              schema:
+                type: string
+        '400':
+          $ref: '../../common-lib.yml#/components/responses/Bad_Request'
+        '500':
+          $ref: '../../common-lib.yml#/components/responses/Internal_Server_Error'
+  /api/v1/cabinet/me:
+    get:
+      tags:
+        - "Личный кабинет"
+      summary: "Получить информацию о себе"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '../../common-lib.yml#/components/responses/Bad_Request'
+        '401':
+          $ref: '../../common-lib.yml#/components/responses/Unauthorized'
+        '403':
+          $ref: '../../common-lib.yml#/components/responses/Forbidden'
+        '500':
+          $ref: '../../common-lib.yml#/components/responses/Internal_Server_Error'
+components:
+  securitySchemes:
+    bearerAuth:
+      $ref: '../../common-lib.yml#/components/securitySchemes/bearerAuth'
+  requestBodies:
+    CreateUser:
+      description: Тело для создания Пользователя
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserCreate'
+    RegistrationUser:
+      description: Тело для регистрации пользователя
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserRegistration'
+    LoginUser:
+      description: Тело для входа
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserLogin'
+  schemas:
+    UserRole:
+      type: string
+      description: |
+        Роль пользователя:
+          * `ADMIN` - Администратор
+          * `USER` - Пользователь
+          * `MANAGER` - Менеджер
+      enum:
+        - "ADMIN"
+        - "USER"
+        - "MANAGER"
+    UserStatus:
+      type: string
+      description: |
+        Статус пользователя:
+          * `WAITING_ACTIVATION` - Ожидает активации
+          * `ACTIVATED` - Активирован
+          * `DEACTIVATED` - Деактивирован
+      enum:
+        - "WAITING_ACTIVATION"
+        - "ACTIVATED"
+        - "DEACTIVATED"
+    User:
+      type: object
+      description: Пользователь
+      allOf:
+        - $ref: '../../common-lib.yml#/components/schemas/t_base_essence'
+      properties:
+        mail:
+          type: string
+          description: "Электронная почта"
+        fio:
+          type: string
+          description: "ФИО"
+        role:
+          $ref: '#/components/schemas/UserRole'
+        status:
+          $ref: '#/components/schemas/UserStatus'
+    UserCreate:
+      type: object
+      description: Пользователь
+      allOf:
+        - $ref: '#/components/schemas/User'
+      properties:
+        password:
+          type: string
+          description: "Пароль"
+    UserRegistration:
+      type: object
+      description: Пользователь
+      properties:
+        mail:
+          type: string
+          description: "Электронная почта"
+        fio:
+          type: string
+          description: "ФИО"
+        password:
+          type: string
+          description: "Пароль"
+    UserLogin:
+      type: object
+      description: Пользователь
+      properties:
+        mail:
+          type: string
+          description: "Электронная почта"
+        password:
+          type: string
+          description: "Пароль"
+
+    PageOfUser:
+      type: object
+      description: Страница пользователей
+      allOf:
+        - $ref: '../../common-lib.yml#/components/schemas/t_page'
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
