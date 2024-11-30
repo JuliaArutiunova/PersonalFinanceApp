@@ -2,7 +2,6 @@ package by.it_academy.jd2.user_service.errorHandler;
 
 import by.it_academy.jd2.user_service.exception.ActivationException;
 import by.it_academy.jd2.user_service.exception.CodeNotValidException;
-import by.it_academy.jd2.user_service.exception.DataChangedException;
 import by.it_academy.jd2.user_service.exception.PasswordNotValidException;
 import by.it_academy.lib.error.ErrorResponse;
 import by.it_academy.lib.error.FieldErrorDTO;
@@ -10,6 +9,7 @@ import by.it_academy.lib.error.StructuredErrorResponse;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordAlreadyExistException;
 import by.it_academy.lib.exception.RecordNotFoundException;
+import by.it_academy.lib.exception.DataChangedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;

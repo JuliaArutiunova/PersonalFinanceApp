@@ -6,7 +6,7 @@ import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.dto.UserLoginDTO;
 import by.it_academy.jd2.user_service.exception.ActivationException;
 import by.it_academy.jd2.user_service.exception.CodeNotValidException;
-import by.it_academy.jd2.user_service.exception.DataChangedException;
+import by.it_academy.lib.exception.DataChangedException;
 import by.it_academy.jd2.user_service.exception.PasswordNotValidException;
 import by.it_academy.jd2.user_service.service.api.IUserService;
 import by.it_academy.jd2.user_service.service.api.IVerificationService;

@@ -1,4 +1,4 @@
-package by.it_academy.jd2.user_service.exception;
+package by.it_academy.lib.exception;
 
 public class DataChangedException extends RuntimeException{
     public DataChangedException() {
