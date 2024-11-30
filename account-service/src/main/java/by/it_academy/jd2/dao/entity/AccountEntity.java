@@ -19,9 +19,8 @@ public class AccountEntity {
     @Column(name = "account_id")
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "user_id_FK"))
-    private UserIdEntity user;
+    @Column(name = "user_id")
+    private UUID user;
 
     @Column(name = "dt_create")
     private LocalDateTime dtCreate;
