@@ -128,7 +128,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public void verifyUser(String code, String mail) { //TODO название
+    public void verify(String code, String mail) {
 
         if (!userStorage.existsByMail(mail)) {
             throw new RecordNotFoundException("Пользователь с email " + mail + " не найден");
@@ -149,7 +149,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public TokenInfoDTO getTokenInfo(UserLoginDTO loginDTO) { //TODO название
+    public TokenInfoDTO getTokenInfo(UserLoginDTO loginDTO) {
 
         UserLoginProjection userInfo = userStorage.findUserLoginProjectionByMail(loginDTO.getMail()).orElseThrow(() ->
                 new RecordNotFoundException("Пользователь с email " + loginDTO.getMail() + " не найден"));
