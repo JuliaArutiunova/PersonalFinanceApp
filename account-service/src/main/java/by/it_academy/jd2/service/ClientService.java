@@ -49,7 +49,7 @@ public class ClientService implements IClientService {
     @Override
     public CurrencyNamesDTO getCurrencyNames(UUID operationCurrency, UUID accountCurrency) {
         String url = UriComponentsBuilder.fromHttpUrl(classifierUrl)
-                .queryParam("operation_currency", operationCurrency)
+                .queryParam("currency", operationCurrency)
                 .queryParam("account_currency", accountCurrency)
                 .build().toUriString();
 
