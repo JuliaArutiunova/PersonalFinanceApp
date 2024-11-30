@@ -45,6 +45,7 @@ public class SecurityConfig {
                                 "/classifier/operation/category").hasAnyRole("ADMIN","MANAGER")
                         .requestMatchers(HttpMethod.GET,
                                 "/classifier/operation/category").permitAll()
+                        .requestMatchers("/classifier_data/*").permitAll()
                         .anyRequest().authenticated()
 
         );
