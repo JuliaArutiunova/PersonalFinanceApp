@@ -97,17 +97,20 @@ public class AccountService implements IAccountService {
     public void update(UUID id, AccountCreateDTO accountCreateDTO, long dtUpdate) {
         AccountEntity account = getAccountEntity(id);
 
-        CurrencyIdEntity currencyId = currencyService.get(accountCreateDTO.getCurrency());
-
         if (account.getDtUpdate().toEpochSecond(ZoneOffset.UTC) != dtUpdate) {
             throw new DataChangedException();
         }
 
-        if (!currencyId.getId().equals(accountCreateDTO.getCurrency()) &&
+        if (!account.getCurrency().getId().equals(accountCreateDTO.getCurrency()) &&
                 account.getBalance() != 0) {
+
+            CurrencyIdEntity currencyId = currencyService.get(accountCreateDTO.getCurrency());
+
             account.setCurrency(currencyId);
+
             double convertedBalance = moneyOperator.convertBalance(account.getBalance(),
                     accountCreateDTO.getCurrency(), accountCreateDTO.getCurrency());
+
             account.setBalance(convertedBalance);
         }
 
