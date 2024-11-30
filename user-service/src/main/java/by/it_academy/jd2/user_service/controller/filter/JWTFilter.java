@@ -1,12 +1,11 @@
 package by.it_academy.jd2.user_service.controller.filter;
 
 import by.it_academy.jd2.user_service.controller.utils.JwtTokenHandler;
-import by.it_academy.jd2.user_service.dto.TokenInfoDTO;
+import by.it_academy.lib.dto.TokenInfoDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -23,9 +22,12 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
-    @Autowired
-    private JwtTokenHandler jwtTokenHandler;
 
+    private final JwtTokenHandler jwtTokenHandler;
+
+    public JWTFilter(JwtTokenHandler jwtTokenHandler) {
+        this.jwtTokenHandler = jwtTokenHandler;
+    }
 
 
     @Override
