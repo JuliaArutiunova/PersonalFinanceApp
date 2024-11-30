@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class CurrencyNamesDTO {
-    private String operationCurrencyName;
+    private String currencyName;
     private String accountCurrencyName;
 }
