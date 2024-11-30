@@ -1,11 +1,15 @@
 package by.it_academy.jd2.user_service.service;
 
 import by.it_academy.jd2.user_service.controller.utils.JwtTokenHandler;
-import by.it_academy.jd2.user_service.dto.*;
+import by.it_academy.jd2.user_service.dto.UserCreateDTO;
+import by.it_academy.jd2.user_service.dto.UserDTO;
+import by.it_academy.jd2.user_service.dto.UserLoginDTO;
+import by.it_academy.jd2.user_service.dto.UserRegistrationDTO;
 import by.it_academy.jd2.user_service.service.api.IAuthenticationService;
 import by.it_academy.jd2.user_service.service.api.IUserService;
 import by.it_academy.jd2.user_service.storage.entity.UserRole;
 import by.it_academy.jd2.user_service.storage.entity.UserStatus;
+import by.it_academy.lib.dto.TokenInfoDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
