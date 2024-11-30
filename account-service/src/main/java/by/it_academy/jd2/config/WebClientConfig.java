@@ -1,4 +1,4 @@
-package by.it_academy.jd2.config.property;
+package by.it_academy.jd2.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
