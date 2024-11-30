@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IUserStorage extends JpaRepository<UserEntity, UUID> {
+public interface IUserDAO extends JpaRepository<UserEntity, UUID> {
 
 
     Page<UserProjection> findAllProjectedBy(Pageable pageable);
