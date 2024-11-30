@@ -2,6 +2,7 @@ package by.it_academy.jd2.classifier_service.service;
 
 import by.it_academy.jd2.classifier_service.dto.CurrencyCreateDTO;
 import by.it_academy.jd2.classifier_service.dto.CurrencyDTO;
+import by.it_academy.lib.dto.CurrencyNamesDTO;
 import by.it_academy.lib.dto.PageDTO;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordAlreadyExistException;
@@ -65,7 +66,17 @@ public class CurrencyService implements ICurrencyService {
     }
 
 
-        return currencyMapper.mapCurrencyPage(page);
+    @Override
+    public CurrencyNamesDTO getNames(UUID operationCurrency, UUID accountCurrency) {
+        String operationCurrencyName = get(operationCurrency).getTitle();
+        String accountCurrencyName = get(accountCurrency).getTitle();
+        return new CurrencyNamesDTO(operationCurrencyName, accountCurrencyName);
+    }
+
+    @Override
+    public CurrencyEntity get(UUID id) {
+        return currencyDAO.findById(id).orElseThrow(() ->
+                new RecordNotFoundException("Валюта не найдена"));
     }
 
 
