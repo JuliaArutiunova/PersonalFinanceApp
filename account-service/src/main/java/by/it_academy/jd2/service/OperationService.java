@@ -24,7 +24,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.UUID;
@@ -89,7 +88,6 @@ public class OperationService implements IOperationService {
             throw new PageNotExistException("Страницы с таким номером не существует");
         }
 
-
         return modelMapper.map(operationEntityPage, new TypeToken<PageDTO<OperationDTO>>() {
         }.getType());
     }
@@ -105,9 +103,8 @@ public class OperationService implements IOperationService {
     @Override
     @Transactional
     public void update(UUID accountId, UUID operationId, long dtUpdate, OperationCreateDTO operationCreateDTO) {
-        AccountEntity account = accountService.getAccountEntity(accountId);
 
-        OperationEntity operationEntity = get(operationId);
+        OperationEntity operationEntity = operationDao.findByOperationIdAndAccountId(operationId,accountId);
 
         if (operationEntity.getDtUpdate().toEpochSecond(ZoneOffset.UTC) != dtUpdate) {
             throw new DataChangedException();
@@ -127,6 +124,7 @@ public class OperationService implements IOperationService {
         if (!operationCreateDTO.getCurrency().equals(operationEntity.getCurrency().getId()) ||
                 operationCreateDTO.getValue() != operationEntity.getValue()) {
             operationEntity.setCurrency(currency);
+            AccountEntity account = operationEntity.getAccount();
             double newBalance =
                     moneyOperator.calculateBalance(account.getBalance(), operationCreateDTO.getValue(),
                     account.getCurrency().getId(),operationCreateDTO.getCurrency());
@@ -140,14 +138,13 @@ public class OperationService implements IOperationService {
 
     @Override
     public void delete(UUID accountId, UUID operationId, long dtUpdate) {
-        AccountEntity account = accountService.getAccountEntity(accountId);
 
-        OperationEntity operationEntity = get(operationId);
+        OperationEntity operationEntity = operationDao.findByOperationIdAndAccountId(operationId,accountId);
 
         if (operationEntity.getDtUpdate().toEpochSecond(ZoneOffset.UTC) != dtUpdate) {
             throw new DataChangedException();
         }
-
+        AccountEntity account = operationEntity.getAccount();
         double newBalance = moneyOperator.rollbackBalance(account.getBalance(),operationEntity.getValue(),
                 account.getCurrency().getId(),operationEntity.getCurrency().getId());
 
