@@ -1,6 +1,6 @@
 package by.it_academy.jd2.user_service.service;
 
-import by.it_academy.jd2.user_service.dto.TokenInfoDTO;
+
 import by.it_academy.jd2.user_service.dto.UserCreateDTO;
 import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.dto.UserLoginDTO;
@@ -10,8 +10,7 @@ import by.it_academy.jd2.user_service.exception.DataChangedException;
 import by.it_academy.jd2.user_service.exception.PasswordNotValidException;
 import by.it_academy.jd2.user_service.service.api.IUserService;
 import by.it_academy.jd2.user_service.service.api.IVerificationService;
-import by.it_academy.jd2.user_service.service.mapper.UserMapper;
-import by.it_academy.jd2.user_service.storage.api.IUserStorage;
+import by.it_academy.jd2.user_service.storage.api.IUserDAO;
 import by.it_academy.jd2.user_service.storage.entity.UserEntity;
 import by.it_academy.jd2.user_service.storage.entity.UserRole;
 import by.it_academy.jd2.user_service.storage.entity.UserStatus;
@@ -19,9 +18,12 @@ import by.it_academy.jd2.user_service.storage.entity.VerificationEntity;
 import by.it_academy.jd2.user_service.storage.projection.UserLoginProjection;
 import by.it_academy.jd2.user_service.storage.projection.UserProjection;
 import by.it_academy.lib.dto.PageDTO;
+import by.it_academy.lib.dto.TokenInfoDTO;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordAlreadyExistException;
 import by.it_academy.lib.exception.RecordNotFoundException;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,17 +37,17 @@ import java.util.UUID;
 @Service
 public class UserService implements IUserService {
 
-    private final IUserStorage userStorage;
+    private final IUserDAO userStorage;
     private final IVerificationService verificationService;
-    private final UserMapper userMapper;
+    private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
 
 
-    public UserService(IUserStorage userStorage, IVerificationService verificationService,
-                       UserMapper userMapper, PasswordEncoder encoder) {
+    public UserService(IUserDAO userStorage, IVerificationService verificationService,
+                       ModelMapper modelMapper, PasswordEncoder encoder) {
         this.userStorage = userStorage;
         this.verificationService = verificationService;
-        this.userMapper = userMapper;
+        this.modelMapper = modelMapper;
         this.encoder = encoder;
     }
 
@@ -56,11 +58,12 @@ public class UserService implements IUserService {
 
         Page<UserProjection> page = userStorage.findAllProjectedBy(PageRequest.of(pageNumber, size));
 
-        if (pageNumber > page.getNumber()) {
+        if (pageNumber > page.getTotalPages() - 1) {
             throw new PageNotExistException("Страницы с номером " + pageNumber + " не существует");
         }
 
-        return userMapper.mapPageToDTO(page);
+        return modelMapper.map(page, new TypeToken<PageDTO<UserDTO>>() {
+        }.getType());
     }
 
 
@@ -71,7 +74,7 @@ public class UserService implements IUserService {
         UserProjection userProjection = userStorage.findUserProjectionByUserId(id).orElseThrow(() ->
                 new RecordNotFoundException("Пользователь не найден"));
 
-        return userMapper.mapUserProjectionToDTO(userProjection);
+        return modelMapper.map(userProjection, UserDTO.class);
     }
 
 
