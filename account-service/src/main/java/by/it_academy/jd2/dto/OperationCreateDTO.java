@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class OperationCreateDTO {
-    @Positive
+    
     @NotNull(message = "Поле не заполнено")
     private Long date;
 
