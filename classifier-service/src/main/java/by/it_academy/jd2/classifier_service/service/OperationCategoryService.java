@@ -42,10 +42,14 @@ public class OperationCategoryService implements IOperationCategoryService {
         if (operationCategoryDAO.existsByTitle(operationCategoryCreateDTO.getTitle())) {
             throw new RecordAlreadyExistException("Категория с таким названием уже существует");
         }
-        operationCategoryDAO.saveAndFlush(OperationCategoryEntity.builder()
+
+        OperationCategoryEntity operationCategory = OperationCategoryEntity.builder()
                 .id(UUID.randomUUID())
                 .title(operationCategoryCreateDTO.getTitle())
-                .build());
+                .build();
+        operationCategoryDAO.saveAndFlush(operationCategory);
+
+        clientService.saveOperationCategoryInAccount(operationCategory.getId());
     }
 
     @Override
