@@ -31,6 +31,7 @@ public class OperationEntity {
     private LocalDateTime dtCreate;
 
     @Column(name = "dt_update")
+    @Version
     private LocalDateTime dtUpdate;
 
     @Column
