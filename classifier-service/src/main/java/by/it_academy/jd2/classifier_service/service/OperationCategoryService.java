@@ -1,33 +1,38 @@
 package by.it_academy.jd2.classifier_service.service;
 
+
 import by.it_academy.jd2.classifier_service.dto.OperationCategoryCreateDTO;
 import by.it_academy.jd2.classifier_service.dto.OperationCategoryDTO;
+import by.it_academy.jd2.classifier_service.service.api.IClientService;
 import by.it_academy.lib.dto.PageDTO;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordAlreadyExistException;
 import by.it_academy.jd2.classifier_service.service.api.IOperationCategoryService;
-import by.it_academy.jd2.classifier_service.service.mapper.OperationCategoryMapper;
 import by.it_academy.jd2.classifier_service.storage.api.IOperationCategoryDAO;
 import by.it_academy.jd2.classifier_service.storage.entity.OperationCategoryEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+
 import java.util.UUID;
 
 @Service
 public class OperationCategoryService implements IOperationCategoryService {
 
     private final IOperationCategoryDAO operationCategoryDAO;
-    private final OperationCategoryMapper operationCategoryMapper;
 
-    public OperationCategoryService(IOperationCategoryDAO operationCategoryDAO,
-                                    OperationCategoryMapper operationCategoryMapper) {
+    private final IClientService clientService;
+
+    private final ModelMapper modelMapper;
+
+    public OperationCategoryService(IOperationCategoryDAO operationCategoryDAO, IClientService clientService, ModelMapper modelMapper) {
         this.operationCategoryDAO = operationCategoryDAO;
-        this.operationCategoryMapper = operationCategoryMapper;
+        this.clientService = clientService;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -52,7 +57,8 @@ public class OperationCategoryService implements IOperationCategoryService {
             throw new PageNotExistException("Страницы с таким номером не существует");
         }
 
-        return operationCategoryMapper.mapOperationCategoryPage(page);
+        return modelMapper.map(page, new TypeToken<PageDTO<OperationCategoryDTO>>() {
+        }.getType());
     }
 
 
