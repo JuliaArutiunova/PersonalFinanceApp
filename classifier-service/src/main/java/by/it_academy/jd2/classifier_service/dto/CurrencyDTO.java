@@ -4,14 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
 public class CurrencyDTO {
-    @JsonProperty(index = 0)
-    private UUID uuid;
+    @JsonProperty(value = "uuid",index = 0)
+    private UUID id;
 
     @JsonProperty(value = "dt_create", index = 1)
     private long dtCreate;
