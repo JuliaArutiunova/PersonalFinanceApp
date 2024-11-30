@@ -9,6 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IVerificationDAO extends JpaRepository<VerificationEntity, UUID> {
-    @Query("SELECT v FROM VerificationEntity v JOIN v.userEntity u WHERE u.mail = :mail")
+    @Query("SELECT v FROM VerificationEntity v WHERE v.userEntity.mail = :mail")
     Optional<VerificationEntity> findVerificationByUserMail(@Param("mail") String mail);
 }
