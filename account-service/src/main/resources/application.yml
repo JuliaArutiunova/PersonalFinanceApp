@@ -2,15 +2,12 @@ spring:
   application:
     name: account-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/account
-    username: postgres
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://pg_db:5432/account?currentSchema=account_data
+    username: account_app_user
     password: 13245
     hikari:
       maximum-pool-size: 15
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
 
 app:
   jwt:
@@ -23,4 +20,4 @@ client:
     key: cur_live_BiQWsl5AFQDOQJ22KCABuZGKz2MbADW772GLjzRU
 
   classifier-service:
-    url: http://localhost:8090/classifier_data/currency
+    url: http://classifier-service:8080/classifier_data/currency
