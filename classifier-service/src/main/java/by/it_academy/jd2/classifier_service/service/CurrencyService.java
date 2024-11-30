@@ -6,9 +6,11 @@ import by.it_academy.lib.dto.PageDTO;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordAlreadyExistException;
 import by.it_academy.jd2.classifier_service.service.api.ICurrencyService;
-import by.it_academy.jd2.classifier_service.service.mapper.CurrencyMapper;
 import by.it_academy.jd2.classifier_service.storage.api.ICurrencyDAO;
 import by.it_academy.jd2.classifier_service.storage.entity.CurrencyEntity;
+import by.it_academy.lib.exception.RecordNotFoundException;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,16 @@ import java.util.UUID;
 public class CurrencyService implements ICurrencyService {
 
     private final ICurrencyDAO currencyDAO;
-    private final CurrencyMapper currencyMapper;
+
+    private final ModelMapper modelMapper;
+
+    private final ClientService clientService;
 
 
-    public CurrencyService(ICurrencyDAO currencyDAO, CurrencyMapper currencyMapper) {
+    public CurrencyService(ICurrencyDAO currencyDAO, ModelMapper modelMapper, ClientService clientService) {
         this.currencyDAO = currencyDAO;
-        this.currencyMapper = currencyMapper;
+        this.modelMapper = modelMapper;
+        this.clientService = clientService;
     }
 
     @Override
@@ -54,6 +60,10 @@ public class CurrencyService implements ICurrencyService {
         if (pageNumber > page.getTotalPages() - 1) {
             throw new PageNotExistException("Страницы с таким номером не существует");
         }
+        return modelMapper.map(page, new TypeToken<PageDTO<CurrencyDTO>>() {
+        }.getType());
+    }
+
 
         return currencyMapper.mapCurrencyPage(page);
     }
