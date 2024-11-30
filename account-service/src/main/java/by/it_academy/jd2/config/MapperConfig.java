@@ -3,7 +3,7 @@ package by.it_academy.jd2.config;
 
 import by.it_academy.jd2.dao.entity.CurrencyIdEntity;
 import by.it_academy.jd2.dao.entity.OperationCategoryIdEntity;
-import by.it_academy.jd2.dao.entity.UserIdEntity;
+
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.sql.Date;
 import java.util.UUID;
 
 @Configuration
@@ -47,14 +46,6 @@ public class MapperConfig {
         };
 
 
-        Converter<UserIdEntity, UUID> userConverter = new AbstractConverter<UserIdEntity, UUID>() {
-            @Override
-            protected UUID convert(UserIdEntity userIdEntity) {
-                return userIdEntity.getId();
-            }
-        };
-
-
         Converter<CurrencyIdEntity, UUID> currencyConverter = new AbstractConverter<CurrencyIdEntity, UUID>() {
             @Override
             protected UUID convert(CurrencyIdEntity currencyIdEntity) {
@@ -73,7 +64,6 @@ public class MapperConfig {
 
         modelMapper.addConverter(timeConverter);
         modelMapper.addConverter(dateConverter);
-        modelMapper.addConverter(userConverter);
         modelMapper.addConverter(currencyConverter);
         modelMapper.addConverter(operationCategoryConverter);
 
