@@ -1,4 +1,4 @@
-package by.it_academy.jd2.user_service.validation;
+package by.it_academy.lib.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

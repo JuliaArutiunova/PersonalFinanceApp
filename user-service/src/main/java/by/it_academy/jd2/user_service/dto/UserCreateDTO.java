@@ -2,7 +2,7 @@ package by.it_academy.jd2.user_service.dto;
 
 import by.it_academy.jd2.user_service.storage.entity.UserRole;
 import by.it_academy.jd2.user_service.storage.entity.UserStatus;
-import by.it_academy.jd2.user_service.validation.EnumValue;
+import by.it_academy.lib.validation.EnumValue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
