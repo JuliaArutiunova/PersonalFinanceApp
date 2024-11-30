@@ -4,6 +4,7 @@ import by.it_academy.jd2.user_service.dto.TokenInfoDTO;
 import by.it_academy.jd2.user_service.dto.UserCreateDTO;
 import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.dto.UserLoginDTO;
+import by.it_academy.jd2.user_service.exception.ActivationException;
 import by.it_academy.jd2.user_service.exception.CodeNotValidException;
 import by.it_academy.jd2.user_service.exception.DataChangedException;
 import by.it_academy.jd2.user_service.exception.PasswordNotValidException;
@@ -149,6 +150,10 @@ public class UserService implements IUserService {
 
         UserLoginProjection userInfo = userStorage.findUserLoginProjectionByMail(loginDTO.getMail()).orElseThrow(() ->
                 new RecordNotFoundException("Пользователь с email " + loginDTO.getMail() + " не найден"));
+
+        if (!userInfo.getStatus().equals(UserStatus.ACTIVATED)) {
+            throw new ActivationException("Аккаунт не активирован. Необходимо пройти верификацию");
+        }
 
         if (!encoder.matches(loginDTO.getPassword(), userInfo.getPassword())) {
             throw new PasswordNotValidException("Неверный пароль");

@@ -1,5 +1,6 @@
 package by.it_academy.jd2.user_service.errorHandler;
 
+import by.it_academy.jd2.user_service.exception.ActivationException;
 import by.it_academy.jd2.user_service.exception.CodeNotValidException;
 import by.it_academy.jd2.user_service.exception.DataChangedException;
 import by.it_academy.jd2.user_service.exception.PasswordNotValidException;
@@ -73,6 +74,11 @@ public class GlobalErrorHandler {
     public ResponseEntity<ErrorResponse> handleOptimisticLock(RuntimeException e) {
         ErrorResponse errorResponse =
                 new ErrorResponse("Данные были изменены другим пользователем. Попробуйте повторить запрос.");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(value = ActivationException.class)
+    public ResponseEntity<ErrorResponse> handleActivation(ActivationException e){
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
