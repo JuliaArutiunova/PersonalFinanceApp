@@ -2,11 +2,12 @@ spring:
   application:
    name: user-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/users
-    username: postgres
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://pg_db:5432/users?currentSchema=user_data
+    username: user_app_user
     password: 13245
     hikari:
-      maximum-pool-size: 50
+      maximum-pool-size: 15
   jpa:
     properties:
       hibernate:
@@ -24,9 +25,14 @@ spring:
           starttls:
             enable: true
           ssl:
-            enable: true # sender!
+            enable: true
 app:
   jwt:
     secret: NmIxNTkwNWUtYWQwZS00ZGM4LWE4MzctZjdlNDQ4ZTllMDlh
     issuer: ITAcademy
+
+
+verification:
+  url: http://localhost/api/v1/cabinet/verification
+
 
