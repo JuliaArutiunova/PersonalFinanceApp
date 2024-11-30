@@ -41,7 +41,7 @@ public class CabinetController {
     @GetMapping("/verification")
     public ResponseEntity<Void> verification(@Valid VerificationDTO verificationDTO) {
 
-        userService.verifyUser(verificationDTO.getCode(), verificationDTO.getMail());
+        userService.verify(verificationDTO.getCode(), verificationDTO.getMail());
 
 
         return new ResponseEntity<>(HttpStatus.OK);
