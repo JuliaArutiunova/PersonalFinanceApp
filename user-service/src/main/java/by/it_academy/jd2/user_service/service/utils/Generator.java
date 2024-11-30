@@ -1,5 +1,6 @@
 package by.it_academy.jd2.user_service.service.utils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -9,7 +10,8 @@ import java.util.Random;
 public class Generator {
 
     private static final String SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-    private String url = "http://localhost:8080/cabinet/verification"; //TODO в настройки
+    @Value("${verification.url}")
+    private String url;
 
 
     public String generateMessageText(String userName, String mail, String code) {
@@ -22,7 +24,7 @@ public class Generator {
         return String.format("""
                 Здравствуйте, %s!\s
                 Для подтверждения учетной записи перейдите по ссылке:\s
-                "%s""", userName, link);
+                %s""", userName, link);
     }
 
 
