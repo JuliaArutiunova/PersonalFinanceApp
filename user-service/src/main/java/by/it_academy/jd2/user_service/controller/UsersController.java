@@ -1,13 +1,12 @@
 package by.it_academy.jd2.user_service.controller;
 
-import by.it_academy.lib.dto.PageDTO;
-import by.it_academy.lib.dto.PaginationDTO;
 import by.it_academy.jd2.user_service.dto.UserCreateDTO;
 import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.service.api.IUserService;
+import by.it_academy.lib.dto.PageDTO;
+import by.it_academy.lib.dto.PaginationDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,38 +23,35 @@ public class UsersController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
         userService.save(userCreateDTO);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @GetMapping
-    public ResponseEntity<PageDTO<UserDTO>> getUserPage(@Valid PaginationDTO paginationDTO) {
+    @ResponseStatus(HttpStatus.OK)
+    public PageDTO<UserDTO> getUserPage(@Valid PaginationDTO paginationDTO) {
 
-        PageDTO<UserDTO> usersPageDTO = userService.getUsersPage(paginationDTO.getPage(), paginationDTO.getSize());
-
-        return new ResponseEntity<>(usersPageDTO, HttpStatus.OK);
+        return userService.getUsersPage(paginationDTO.getPage(), paginationDTO.getSize());
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable("uuid") UUID uuid) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserDTO getUser(@PathVariable("uuid") UUID uuid) {
 
-        UserDTO userDTO = userService.getUserInfoById(uuid);
-
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        return userService.getUserInfoById(uuid);
     }
 
     @PutMapping("/{uuid}/dt_update/{dt_update}")
-    public ResponseEntity<Void> editUserInfo(@PathVariable("uuid") UUID uuid,
-                                             @PathVariable("dt_update") long dtUpdate,
-                                             @Valid
-                                             @RequestBody UserCreateDTO userCreateDTO) {
+    @ResponseStatus(HttpStatus.OK)
+    public void editUserInfo(@PathVariable("uuid") UUID uuid,
+                             @PathVariable("dt_update") long dtUpdate,
+                             @Valid
+                             @RequestBody UserCreateDTO userCreateDTO) {
 
         userService.update(uuid, dtUpdate, userCreateDTO);
-        return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
