@@ -11,7 +11,6 @@ public class MailSenderService {
 
     @Value("${spring.mail.username}")
     private  String from;
-    private String title = "PersonalFinances верификация";
 
     private final JavaMailSender javaMailSender;
 
@@ -23,6 +22,7 @@ public class MailSenderService {
     public void sendMail(String to, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
+        String title = "PersonalFinances верификация";
         message.setSubject(title);
         message.setText(text);
         message.setFrom(from);
