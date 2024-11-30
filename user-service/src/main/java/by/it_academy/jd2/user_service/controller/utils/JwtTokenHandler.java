@@ -1,7 +1,7 @@
 package by.it_academy.jd2.user_service.controller.utils;
 
 import by.it_academy.jd2.user_service.config.property.JWTProperty;
-import by.it_academy.jd2.user_service.dto.TokenInfoDTO;
+import by.it_academy.lib.dto.TokenInfoDTO;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +27,7 @@ public class JwtTokenHandler {
                 .claim("role", tokenInfoDTO.getRole())
                 .setIssuer(jwtProperty.getIssuer())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1)))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(7)))
                 .signWith(SignatureAlgorithm.HS512, jwtProperty.getSecret())
                 .compact();
     }
