@@ -8,7 +8,7 @@
 		<version>3.3.5</version>
 		<relativePath/>
 	</parent>
-	<groupId>com.example</groupId>
+	<groupId>by.it-academy</groupId>
 	<artifactId>classifier-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>classifier-service</name>
@@ -89,6 +89,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<excludes>
 						<exclude>
@@ -96,9 +103,11 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<finalName>${project.name}</finalName>
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>${project.name}-${project.version}</finalName>
 	</build>
 
 </project>
