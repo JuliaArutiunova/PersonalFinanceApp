@@ -1,4 +1,4 @@
-package by.it_academy.jd2.dto.exchangeRate;
+package by.it_academy.jd2.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

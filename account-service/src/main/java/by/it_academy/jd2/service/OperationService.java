@@ -7,7 +7,7 @@ import by.it_academy.jd2.dao.entity.OperationCategoryIdEntity;
 import by.it_academy.jd2.dao.entity.OperationEntity;
 import by.it_academy.jd2.dto.OperationCreateDTO;
 import by.it_academy.jd2.dto.OperationDTO;
-import by.it_academy.jd2.dto.exchangeRate.RecalculationDTO;
+import by.it_academy.jd2.dto.RecalculationDTO;
 import by.it_academy.jd2.service.api.IAccountService;
 import by.it_academy.jd2.service.api.ICurrencyService;
 import by.it_academy.jd2.service.api.IOperationCategoryService;
