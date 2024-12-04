@@ -1,13 +1,17 @@
 package by.it_academy.jd2.service.api;
 
+import by.it_academy.jd2.dto.exchangeRate.ExchangeRateInfo;
 import by.it_academy.lib.dto.CurrencyNamesDTO;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IClientService {
-    Double getExchangeRate(String baseCurrency, String currency);
+    ExchangeRateInfo getExchangeRate(String baseCurrency, String... currency);
 
-    CurrencyNamesDTO getCurrencyNames(UUID operationCurrency, UUID accountCurrency);
+    Map<UUID,String> getCurrencyNames(UUID... currencies);
+
 
 }

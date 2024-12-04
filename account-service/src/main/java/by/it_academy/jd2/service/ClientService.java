@@ -4,13 +4,15 @@ import by.it_academy.jd2.dto.exchangeRate.ExchangeRateInfo;
 import by.it_academy.jd2.service.api.IClientService;
 import by.it_academy.lib.dto.CurrencyNamesDTO;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -29,35 +31,51 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public Double getExchangeRate(String baseCurrency, String currency) {
+    public ExchangeRateInfo getExchangeRate(String baseCurrency, String... currency) {
+
+        String currencies = getCurrenciesParamString(currency);
 
         String url = UriComponentsBuilder.fromHttpUrl(currencyApiUrl)
                 .queryParam("apikey", currencyApiKey)
                 .queryParam("base_currency", baseCurrency)
-                .queryParam("currencies", currency)
+                .queryParam("currencies", currencies)
                 .build().toUriString();
 
         return webClient.get()
                 .uri(url)
                 .retrieve()
                 .bodyToMono(ExchangeRateInfo.class)
-                .map(exchangeRateInfo -> exchangeRateInfo.getData().get(currency).getValue()).block();
+                .block();
 
 
     }
 
     @Override
-    public CurrencyNamesDTO getCurrencyNames(UUID operationCurrency, UUID accountCurrency) {
-        String url = UriComponentsBuilder.fromHttpUrl(classifierUrl)
-                .queryParam("currency", operationCurrency)
-                .queryParam("account_currency", accountCurrency)
-                .build().toUriString();
+    public Map<UUID, String> getCurrencyNames(UUID... currencies) {
 
-        return webClient.get()
-                .uri(url)
+        return webClient.post()
+                .uri(classifierUrl).contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(currencies))
                 .retrieve()
-                .bodyToMono(CurrencyNamesDTO.class)
+                .bodyToMono(new ParameterizedTypeReference<Map<UUID, String>>() {
+                })
                 .block();
+    }
+
+    private String getCurrenciesParamString(String[] currency) {
+        int currencyLength = currency.length;
+
+        if (currencyLength > 1) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < currencyLength; i++) {
+                stringBuilder.append(currency[i]);
+                stringBuilder.append(i != currencyLength - 1 ? "," : "");
+            }
+            return stringBuilder.toString();
+
+        } else {
+            return currency[0];
+        }
     }
 
 
