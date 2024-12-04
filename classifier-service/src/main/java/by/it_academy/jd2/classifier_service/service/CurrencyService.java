@@ -2,14 +2,12 @@ package by.it_academy.jd2.classifier_service.service;
 
 import by.it_academy.jd2.classifier_service.dto.CurrencyCreateDTO;
 import by.it_academy.jd2.classifier_service.dto.CurrencyDTO;
-import by.it_academy.lib.dto.CurrencyNamesDTO;
 import by.it_academy.lib.dto.PageDTO;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordAlreadyExistException;
 import by.it_academy.jd2.classifier_service.service.api.ICurrencyService;
 import by.it_academy.jd2.classifier_service.storage.api.ICurrencyDAO;
 import by.it_academy.jd2.classifier_service.storage.entity.CurrencyEntity;
-import by.it_academy.lib.exception.RecordNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CurrencyService implements ICurrencyService {
@@ -68,16 +66,13 @@ public class CurrencyService implements ICurrencyService {
 
 
     @Override
-    public CurrencyNamesDTO getNames(UUID operationCurrency, UUID accountCurrency) {
-        String operationCurrencyName = get(operationCurrency).getTitle();
-        String accountCurrencyName = get(accountCurrency).getTitle();
-        return new CurrencyNamesDTO(operationCurrencyName, accountCurrencyName);
-    }
-
-    @Override
-    public CurrencyEntity get(UUID id) {
-        return currencyDAO.findById(id).orElseThrow(() ->
-                new RecordNotFoundException("Валюта не найдена"));
+    public Map<UUID, String> getNames(UUID[] uuids) {
+        List<CurrencyEntity> currencyEntities = currencyDAO.findAllById(Arrays.asList(uuids));
+        Map<UUID, String> names = new HashMap<>();
+        currencyEntities.forEach(currencyEntity -> {
+            names.put(currencyEntity.getId(), currencyEntity.getTitle());
+        });
+        return names;
     }
 
 

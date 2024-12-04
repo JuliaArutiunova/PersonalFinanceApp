@@ -6,6 +6,7 @@ import by.it_academy.jd2.classifier_service.storage.entity.CurrencyEntity;
 import by.it_academy.lib.dto.CurrencyNamesDTO;
 import by.it_academy.lib.dto.PageDTO;
 
+import java.util.Map;
 import java.util.UUID;
 
 public interface ICurrencyService {
@@ -13,7 +14,6 @@ public interface ICurrencyService {
 
     PageDTO<CurrencyDTO> getCurrencyPage(int pageNumber, int size);
 
-    CurrencyNamesDTO getNames(UUID operationCurrency, UUID accountCurrency);
+    Map<UUID, String> getNames(UUID[] uuids);
 
-    CurrencyEntity get(UUID id);
 }

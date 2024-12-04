@@ -5,6 +5,7 @@ import by.it_academy.lib.dto.CurrencyNamesDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -16,10 +17,10 @@ public class DataController {
         this.currencyService = currencyService;
     }
 
-    @GetMapping("/currency")
+    @PostMapping("/currency")
     @ResponseStatus(HttpStatus.OK)
-    public CurrencyNamesDTO getCurrencyNames(@RequestParam("currency") UUID operationCurrency,
-                                             @RequestParam("account_currency") UUID accountCurrency) {
-        return currencyService.getNames(operationCurrency, accountCurrency);
+    public Map<UUID, String> getCurrencyNames(@RequestBody UUID[] uuids) {
+
+        return currencyService.getNames(uuids); //этот метод возвращает Map<UUID, String>
     }
 }
