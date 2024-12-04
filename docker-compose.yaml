@@ -39,12 +39,12 @@ services:
       - finance-network
   classifier-service:
     build: classifier-service
-    image: classifier-service-finance:1.0.2
+    image: classifier-service-finance:1.0.4
     networks:
       - finance-network
   account-service:
     build: account-service
-    image: account-service-finance:1.0.2
+    image: account-service-finance:1.0.4
     networks:
       - finance-network
 networks:

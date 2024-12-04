@@ -1,12 +1,13 @@
 package by.it_academy.jd2.service.utils;
 
+import by.it_academy.jd2.dto.exchangeRate.ExchangeRateInfo;
+import by.it_academy.jd2.dto.exchangeRate.RecalculationDTO;
 import by.it_academy.jd2.service.api.IClientService;
-import by.it_academy.lib.dto.CurrencyNamesDTO;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class MoneyOperator {
@@ -36,14 +37,67 @@ public class MoneyOperator {
     }
 
     public double convertBalance(double value, UUID currency, UUID accountCurrency) {
-        CurrencyNamesDTO currencyNames =
-                clientService.getCurrencyNames(currency, accountCurrency);
-        Double exchangeRate =
-                clientService.getExchangeRate(currencyNames.getCurrencyName(),
-                        currencyNames.getAccountCurrencyName());
 
-        return BigDecimal.valueOf(value).multiply(BigDecimal.valueOf(exchangeRate))
-                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        BigDecimal convertedValue = convertValue(value, currency, accountCurrency);
+
+        return convertedValue.setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
+
+
+    public double recalculateBalance(RecalculationDTO recalculationDTO) {
+        BigDecimal balance = BigDecimal.valueOf(recalculationDTO.getAccountBalance());
+        BigDecimal oldOperationValue = BigDecimal.valueOf(recalculationDTO.getOldValue());
+        BigDecimal newOperationValue = BigDecimal.valueOf(recalculationDTO.getNewValue());
+
+        UUID oldCurrencyId = recalculationDTO.getOldCurrency();
+        UUID newCurrencyId = recalculationDTO.getNewCurrency();
+        UUID accountCurrencyId = recalculationDTO.getAccountCurrency();
+
+        if (oldCurrencyId.equals(newCurrencyId) && oldCurrencyId.equals(accountCurrencyId)) {
+
+            return balance
+                    .add(newOperationValue.subtract(oldOperationValue))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        } else if (!oldCurrencyId.equals(newCurrencyId) && !oldCurrencyId.equals(accountCurrencyId)) {
+
+            Map<UUID, String> currencyInfo =
+                    clientService.getCurrencyNames(oldCurrencyId, accountCurrencyId, newCurrencyId);
+
+            ExchangeRateInfo exchangeRateInfo =
+                    clientService.getExchangeRate(currencyInfo.get(oldCurrencyId),
+                            currencyInfo.get(accountCurrencyId), currencyInfo.get(newCurrencyId));
+
+            BigDecimal oldCurrencyExchangeRate =
+                    BigDecimal.valueOf(exchangeRateInfo.getData().get(currencyInfo.get(accountCurrencyId)).getValue());
+
+            double newToOldRate = exchangeRateInfo.getData().get(currencyInfo.get(newCurrencyId)).getValue();
+
+            BigDecimal newCurrencyExchangeRate =
+                    oldCurrencyExchangeRate.divide(BigDecimal.valueOf(newToOldRate), 10, RoundingMode.HALF_UP);
+
+            return balance
+                    .add((newOperationValue.multiply(newCurrencyExchangeRate))
+                            .subtract(oldOperationValue.multiply(oldCurrencyExchangeRate)))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        } else {
+
+            Map<UUID, String> currencyInfo = clientService.getCurrencyNames(accountCurrencyId, newCurrencyId);
+
+            ExchangeRateInfo exchangeRateInfo =
+                    clientService.getExchangeRate(currencyInfo.get(newCurrencyId), currencyInfo.get(accountCurrencyId));
+
+            BigDecimal exchangeRate =
+                    BigDecimal.valueOf(exchangeRateInfo.getData().get(currencyInfo.get(accountCurrencyId)).getValue());
+
+            return balance
+                    .add((newOperationValue.multiply(exchangeRate))
+                            .subtract(oldOperationValue.multiply(exchangeRate)))
+                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        }
+
     }
 
     public double rollbackBalance(double balance, double value,
@@ -62,11 +116,15 @@ public class MoneyOperator {
     }
 
     public BigDecimal convertValue(double value, UUID currency, UUID accountCurrency) {
-        CurrencyNamesDTO currencyNames =
-                clientService.getCurrencyNames(currency, accountCurrency);
-        Double exchangeRate =
-                clientService.getExchangeRate(currencyNames.getCurrencyName(),
-                        currencyNames.getAccountCurrencyName());
+
+        Map<UUID, String> currencyInfo = clientService.getCurrencyNames(currency,accountCurrency);
+
+        ExchangeRateInfo exchangeRateInfo =
+                clientService.getExchangeRate(currencyInfo.get(currency), currencyInfo.get(accountCurrency));
+
+        double exchangeRate
+                = exchangeRateInfo.getData().get(currencyInfo.get(accountCurrency)).getValue();
+
         return BigDecimal.valueOf(value).multiply(BigDecimal.valueOf(exchangeRate));
     }
 

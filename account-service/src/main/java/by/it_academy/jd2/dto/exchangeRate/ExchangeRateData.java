@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class ExchangeRateData {
     private String code;
-    private Double value;
+    private double value;
 }

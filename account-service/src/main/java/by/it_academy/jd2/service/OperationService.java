@@ -7,6 +7,7 @@ import by.it_academy.jd2.dao.entity.OperationCategoryIdEntity;
 import by.it_academy.jd2.dao.entity.OperationEntity;
 import by.it_academy.jd2.dto.OperationCreateDTO;
 import by.it_academy.jd2.dto.OperationDTO;
+import by.it_academy.jd2.dto.exchangeRate.RecalculationDTO;
 import by.it_academy.jd2.service.api.IAccountService;
 import by.it_academy.jd2.service.api.ICurrencyService;
 import by.it_academy.jd2.service.api.IOperationCategoryService;
@@ -79,7 +80,7 @@ public class OperationService implements IOperationService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageDTO<OperationDTO> get(UUID accountId,PaginationDTO paginationDTO) {
+    public PageDTO<OperationDTO> get(UUID accountId, PaginationDTO paginationDTO) {
         Page<OperationEntity> operationEntityPage =
                 operationDao.findAllByAccountId(accountId,
                         PageRequest.of(paginationDTO.getPage(), paginationDTO.getSize()));
@@ -104,7 +105,7 @@ public class OperationService implements IOperationService {
     @Transactional
     public void update(UUID accountId, UUID operationId, long dtUpdate, OperationCreateDTO operationCreateDTO) {
 
-        OperationEntity operationEntity = operationDao.findByOperationIdAndAccountId(operationId,accountId);
+        OperationEntity operationEntity = operationDao.findByOperationIdAndAccountId(operationId, accountId);
 
         if (operationEntity.getDtUpdate().toEpochSecond(ZoneOffset.UTC) != dtUpdate) {
             throw new DataChangedException();
@@ -123,11 +124,17 @@ public class OperationService implements IOperationService {
 
         if (!operationCreateDTO.getCurrency().equals(operationEntity.getCurrency().getId()) ||
                 operationCreateDTO.getValue() != operationEntity.getValue()) {
-            operationEntity.setCurrency(currency);
             AccountEntity account = operationEntity.getAccount();
-            double newBalance =
-                    moneyOperator.calculateBalance(account.getBalance(), operationCreateDTO.getValue(),
-                    account.getCurrency().getId(),operationCreateDTO.getCurrency());
+            double newBalance = moneyOperator.recalculateBalance(
+                    RecalculationDTO.builder()
+                            .oldValue(operationEntity.getValue())
+                            .oldCurrency(operationEntity.getCurrency().getId())
+                            .newValue(operationCreateDTO.getValue())
+                            .newCurrency(operationCreateDTO.getCurrency())
+                            .accountBalance(account.getBalance())
+                            .accountCurrency(account.getCurrency().getId())
+                            .build());
+            operationEntity.setCurrency(currency);
             account.setBalance(newBalance);
             accountService.save(account);
         }
@@ -139,14 +146,14 @@ public class OperationService implements IOperationService {
     @Override
     public void delete(UUID accountId, UUID operationId, long dtUpdate) {
 
-        OperationEntity operationEntity = operationDao.findByOperationIdAndAccountId(operationId,accountId);
+        OperationEntity operationEntity = operationDao.findByOperationIdAndAccountId(operationId, accountId);
 
         if (operationEntity.getDtUpdate().toEpochSecond(ZoneOffset.UTC) != dtUpdate) {
             throw new DataChangedException();
         }
         AccountEntity account = operationEntity.getAccount();
-        double newBalance = moneyOperator.rollbackBalance(account.getBalance(),operationEntity.getValue(),
-                account.getCurrency().getId(),operationEntity.getCurrency().getId());
+        double newBalance = moneyOperator.rollbackBalance(account.getBalance(), operationEntity.getValue(),
+                account.getCurrency().getId(), operationEntity.getCurrency().getId());
 
         account.setBalance(newBalance);
 
