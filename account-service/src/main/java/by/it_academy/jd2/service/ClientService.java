@@ -2,6 +2,7 @@ package by.it_academy.jd2.service;
 
 import by.it_academy.jd2.dto.exchangeRate.ExchangeRateInfo;
 import by.it_academy.jd2.service.api.IClientService;
+import by.it_academy.lib.dto.AuditCreateDTO;
 import by.it_academy.lib.dto.CurrencyNamesDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -25,6 +26,8 @@ public class ClientService implements IClientService {
     private String currencyApiUrl;
     @Value("${client.classifier-service.url}")
     private String classifierUrl;
+    @Value("${client.audit-service.url}")
+    private String auditUrl;
 
     public ClientService(WebClient webClient) {
         this.webClient = webClient;
@@ -76,6 +79,18 @@ public class ClientService implements IClientService {
         } else {
             return currency[0];
         }
+    }
+
+    @Override
+    public void toAudit(AuditCreateDTO auditCreateDTO) {
+        webClient.post()
+                .uri(auditUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(auditCreateDTO)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .subscribe();
+
     }
 
 
