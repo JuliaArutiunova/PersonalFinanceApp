@@ -34,17 +34,22 @@ services:
       - finance-network
   user-service:
     build: user-service
-    image: user-service-finance:1.0.2
+    image: user-service-finance:1.0.3
     networks:
       - finance-network
   classifier-service:
     build: classifier-service
-    image: classifier-service-finance:1.0.4
+    image: classifier-service-finance:1.0.5
     networks:
       - finance-network
   account-service:
     build: account-service
-    image: account-service-finance:1.0.4
+    image: account-service-finance:1.0.5
+    networks:
+      - finance-network
+  audit-service:
+    build: audit-service
+    image: audit-service-finance:1.0.0
     networks:
       - finance-network
 networks:
