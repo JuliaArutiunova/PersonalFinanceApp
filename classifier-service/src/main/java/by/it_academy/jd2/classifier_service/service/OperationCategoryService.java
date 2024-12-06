@@ -4,7 +4,9 @@ package by.it_academy.jd2.classifier_service.service;
 import by.it_academy.jd2.classifier_service.dto.OperationCategoryCreateDTO;
 import by.it_academy.jd2.classifier_service.dto.OperationCategoryDTO;
 import by.it_academy.jd2.classifier_service.service.api.IClientService;
+import by.it_academy.lib.dto.AuditCreateDTO;
 import by.it_academy.lib.dto.PageDTO;
+import by.it_academy.lib.enums.EssenceType;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordAlreadyExistException;
 import by.it_academy.jd2.classifier_service.service.api.IOperationCategoryService;
@@ -27,13 +29,17 @@ public class OperationCategoryService implements IOperationCategoryService {
 
     private final IClientService clientService;
 
+    private final UserHolder userHolder;
+
     private final ModelMapper modelMapper;
 
-    public OperationCategoryService(IOperationCategoryDAO operationCategoryDAO, IClientService clientService, ModelMapper modelMapper) {
+    public OperationCategoryService(IOperationCategoryDAO operationCategoryDAO, IClientService clientService, UserHolder userHolder, ModelMapper modelMapper) {
         this.operationCategoryDAO = operationCategoryDAO;
         this.clientService = clientService;
+        this.userHolder = userHolder;
         this.modelMapper = modelMapper;
     }
+
 
     @Override
     @Transactional
@@ -50,6 +56,13 @@ public class OperationCategoryService implements IOperationCategoryService {
         operationCategoryDAO.saveAndFlush(operationCategory);
 
         clientService.saveOperationCategoryInAccount(operationCategory.getId());
+
+        clientService.toAudit(AuditCreateDTO.builder()
+                .user(userHolder.getUserId())
+                .text("Создана новая категория операций")
+                .entityId(operationCategory.getId())
+                .essenceType(EssenceType.OPERATION_CATEGORY)
+                .build());
     }
 
     @Override

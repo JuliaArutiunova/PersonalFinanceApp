@@ -2,7 +2,9 @@ package by.it_academy.jd2.classifier_service.service;
 
 import by.it_academy.jd2.classifier_service.dto.CurrencyCreateDTO;
 import by.it_academy.jd2.classifier_service.dto.CurrencyDTO;
+import by.it_academy.lib.dto.AuditCreateDTO;
 import by.it_academy.lib.dto.PageDTO;
+import by.it_academy.lib.enums.EssenceType;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordAlreadyExistException;
 import by.it_academy.jd2.classifier_service.service.api.ICurrencyService;
@@ -22,16 +24,19 @@ public class CurrencyService implements ICurrencyService {
 
     private final ICurrencyDAO currencyDAO;
 
-    private final ModelMapper modelMapper;
-
     private final ClientService clientService;
 
+    private final UserHolder userHolder;
 
-    public CurrencyService(ICurrencyDAO currencyDAO, ModelMapper modelMapper, ClientService clientService) {
+    private final ModelMapper modelMapper;
+
+    public CurrencyService(ICurrencyDAO currencyDAO, ClientService clientService, UserHolder userHolder, ModelMapper modelMapper) {
         this.currencyDAO = currencyDAO;
-        this.modelMapper = modelMapper;
         this.clientService = clientService;
+        this.userHolder = userHolder;
+        this.modelMapper = modelMapper;
     }
+
 
     @Override
     @Transactional
@@ -49,6 +54,14 @@ public class CurrencyService implements ICurrencyService {
         currencyDAO.saveAndFlush(currencyEntity);
 
         clientService.saveCurrencyInAccount(currencyEntity.getId());
+
+        clientService.toAudit(AuditCreateDTO.builder()
+                .user(userHolder.getUserId())
+                .text("Создана новая валюта")
+                .entityId(currencyEntity.getId())
+                .essenceType(EssenceType.CURRENCY)
+                .build());
+
     }
 
     @Override
