@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 @Data
 
-public class AuditDTO {
+public class AuditCreateDTO {
     private UUID user;
     private String text;
     private EssenceType essenceType;
