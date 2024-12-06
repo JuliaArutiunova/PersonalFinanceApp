@@ -58,7 +58,7 @@ public class CabinetController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> me() {
 
-        UserDTO userDTO = authenticationService.getMe();
+        UserDTO userDTO = userService.getMe();
 
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }

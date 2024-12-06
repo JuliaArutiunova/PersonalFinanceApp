@@ -202,6 +202,15 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
+    public UserDTO getMe() {
+
+        UUID id = userHolder.getUserId();
+
+        return getById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public UserInfoDTO getUserInfo(UUID uuid) {
 
         UserInfoProjection userInfoProjection = userStorage.findUserInfoProjectionByUserId(uuid);

@@ -26,6 +26,7 @@ public interface IUserService {
 
     TokenInfoDTO getTokenInfo(UserLoginDTO loginDTO);
 
+    UserDTO getMe();
 
     UserInfoDTO getUserInfo(UUID uuid);
 
