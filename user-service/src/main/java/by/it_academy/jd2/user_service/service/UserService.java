@@ -6,8 +6,11 @@ import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.dto.UserLoginDTO;
 import by.it_academy.jd2.user_service.exception.ActivationException;
 import by.it_academy.jd2.user_service.exception.CodeNotValidException;
+import by.it_academy.jd2.user_service.service.api.IClientService;
 import by.it_academy.jd2.user_service.storage.projection.UserInfoProjection;
+import by.it_academy.lib.dto.AuditCreateDTO;
 import by.it_academy.lib.dto.UserInfoDTO;
+import by.it_academy.lib.enums.EssenceType;
 import by.it_academy.lib.exception.DataChangedException;
 import by.it_academy.jd2.user_service.exception.PasswordNotValidException;
 import by.it_academy.jd2.user_service.service.api.IUserService;
@@ -43,14 +46,18 @@ public class UserService implements IUserService {
     private final IVerificationService verificationService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
+    private final UserHolder userHolder;
+    private final IClientService clientService;
 
 
     public UserService(IUserDAO userStorage, IVerificationService verificationService,
-                       ModelMapper modelMapper, PasswordEncoder encoder) {
+                       ModelMapper modelMapper, PasswordEncoder encoder, UserHolder userHolder, IClientService clientService) {
         this.userStorage = userStorage;
         this.verificationService = verificationService;
         this.modelMapper = modelMapper;
         this.encoder = encoder;
+        this.userHolder = userHolder;
+        this.clientService = clientService;
     }
 
 
@@ -105,6 +112,17 @@ public class UserService implements IUserService {
             verificationService.create(userEntity);
         }
 
+        AuditCreateDTO auditCreateDTO = new AuditCreateDTO();
+        auditCreateDTO.setText("Создан новый пользователь");
+        auditCreateDTO.setEntityId(userEntity.getUserId());
+        auditCreateDTO.setEssenceType(EssenceType.USER);
+        if (userHolder.getUserId() == null) {
+            auditCreateDTO.setUser(userEntity.getUserId());
+        } else {
+            auditCreateDTO.setUser(userHolder.getUserId());
+        }
+        clientService.toAudit(auditCreateDTO);
+
 
     }
 
@@ -126,6 +144,13 @@ public class UserService implements IUserService {
         userEntity.setPassword(encoder.encode(userCreateDTO.getPassword()));
 
         userStorage.saveAndFlush(userEntity);
+
+        clientService.toAudit(AuditCreateDTO.builder()
+                .user(userHolder.getUserId())
+                .text("Отредактирована информация о пользователе")
+                .entityId(uuid)
+                .essenceType(EssenceType.USER)
+                .build());
     }
 
     @Override
@@ -163,6 +188,13 @@ public class UserService implements IUserService {
         if (!encoder.matches(loginDTO.getPassword(), userInfo.getPassword())) {
             throw new PasswordNotValidException("Неверный пароль");
         }
+
+        clientService.toAudit(AuditCreateDTO.builder()
+                .user(userInfo.getUserId())
+                .text("Пользователь вошел в систему")
+                .entityId(userInfo.getUserId())
+                .essenceType(EssenceType.USER)
+                .build());
 
         return new TokenInfoDTO(userInfo.getUserId().toString(), userInfo.getRole().name());
     }
