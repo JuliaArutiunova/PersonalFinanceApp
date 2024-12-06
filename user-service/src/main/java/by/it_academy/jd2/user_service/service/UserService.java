@@ -6,6 +6,8 @@ import by.it_academy.jd2.user_service.dto.UserDTO;
 import by.it_academy.jd2.user_service.dto.UserLoginDTO;
 import by.it_academy.jd2.user_service.exception.ActivationException;
 import by.it_academy.jd2.user_service.exception.CodeNotValidException;
+import by.it_academy.jd2.user_service.storage.projection.UserInfoProjection;
+import by.it_academy.lib.dto.UserInfoDTO;
 import by.it_academy.lib.exception.DataChangedException;
 import by.it_academy.jd2.user_service.exception.PasswordNotValidException;
 import by.it_academy.jd2.user_service.service.api.IUserService;
@@ -31,7 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -163,6 +165,28 @@ public class UserService implements IUserService {
         }
 
         return new TokenInfoDTO(userInfo.getUserId().toString(), userInfo.getRole().name());
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserInfoDTO getUserInfo(UUID uuid) {
+
+        UserInfoProjection userInfoProjection = userStorage.findUserInfoProjectionByUserId(uuid);
+
+        return modelMapper.map(userInfoProjection, UserInfoDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<UUID, UserInfoDTO> getUsersInfo(Set<UUID> uuids) {
+        Map<UUID, UserInfoDTO> userInfoDTOMap = new HashMap<>();
+
+        userStorage.findAllProjectedByUserIdIn(uuids).forEach(userInfoProjection ->
+                userInfoDTOMap.put(userInfoProjection.getUserId(),
+                        modelMapper.map(userInfoProjection, UserInfoDTO.class)));
+
+        return userInfoDTOMap;
     }
 
 
