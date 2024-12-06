@@ -1,0 +1,24 @@
+spring:
+  application:
+   name: audit-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://pg_db:5432/audit?currentSchema=audit_data
+    username: audit_app_user
+    password: 13245
+    hikari:
+      maximum-pool-size: 15
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+
+app:
+  jwt:
+    secret: NmIxNTkwNWUtYWQwZS00ZGM4LWE4MzctZjdlNDQ4ZTllMDlh
+    issuer: ITAcademy
+
+client:
+  user-service:
+    url: http://user-service:8080/users_data
+
