@@ -8,13 +8,12 @@ import by.it_academy.jd2.dao.entity.OperationEntity;
 import by.it_academy.jd2.dto.OperationCreateDTO;
 import by.it_academy.jd2.dto.OperationDTO;
 import by.it_academy.jd2.dto.RecalculationDTO;
-import by.it_academy.jd2.service.api.IAccountService;
-import by.it_academy.jd2.service.api.ICurrencyService;
-import by.it_academy.jd2.service.api.IOperationCategoryService;
-import by.it_academy.jd2.service.api.IOperationService;
+import by.it_academy.jd2.service.api.*;
 import by.it_academy.jd2.service.utils.MoneyOperator;
+import by.it_academy.lib.dto.AuditCreateDTO;
 import by.it_academy.lib.dto.PageDTO;
 import by.it_academy.lib.dto.PaginationDTO;
+import by.it_academy.lib.enums.EssenceType;
 import by.it_academy.lib.exception.DataChangedException;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordNotFoundException;
@@ -34,15 +33,19 @@ public class OperationService implements IOperationService {
     private final IOperationDao operationDao;
     private final IAccountService accountService;
     private final IOperationCategoryService operationCategoryService;
+    private final IClientService clientService;
     private final ICurrencyService currencyService;
+    private final UserHolder userHolder;
     private final ModelMapper modelMapper;
     private final MoneyOperator moneyOperator;
 
-    public OperationService(IOperationDao operationDao, IAccountService accountService, IOperationCategoryService operationCategoryService, ICurrencyService currencyService, ModelMapper modelMapper, MoneyOperator moneyOperator) {
+    public OperationService(IOperationDao operationDao, IAccountService accountService, IOperationCategoryService operationCategoryService, IClientService clientService, ICurrencyService currencyService, UserHolder userHolder, ModelMapper modelMapper, MoneyOperator moneyOperator) {
         this.operationDao = operationDao;
         this.accountService = accountService;
         this.operationCategoryService = operationCategoryService;
+        this.clientService = clientService;
         this.currencyService = currencyService;
+        this.userHolder = userHolder;
         this.modelMapper = modelMapper;
         this.moneyOperator = moneyOperator;
     }
@@ -75,6 +78,14 @@ public class OperationService implements IOperationService {
         accountService.save(account);
 
         operationDao.saveAndFlush(operationEntity);
+
+        clientService.toAudit(AuditCreateDTO.builder()
+                .user(userHolder.getUserId())
+                .text("Добавлена операция по счёту")
+                .entityId(operationEntity.getId())
+                .essenceType(EssenceType.OPERATION)
+                .build());
+
 
     }
 

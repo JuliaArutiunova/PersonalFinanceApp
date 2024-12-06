@@ -7,9 +7,12 @@ import by.it_academy.jd2.dao.entity.CurrencyIdEntity;
 import by.it_academy.jd2.dto.AccountCreateDTO;
 import by.it_academy.jd2.dto.AccountDTO;
 import by.it_academy.jd2.service.api.IAccountService;
+import by.it_academy.jd2.service.api.IClientService;
 import by.it_academy.jd2.service.api.ICurrencyService;
 import by.it_academy.jd2.service.utils.MoneyOperator;
+import by.it_academy.lib.dto.AuditCreateDTO;
 import by.it_academy.lib.dto.PageDTO;
+import by.it_academy.lib.enums.EssenceType;
 import by.it_academy.lib.exception.DataChangedException;
 import by.it_academy.lib.exception.PageNotExistException;
 import by.it_academy.lib.exception.RecordNotFoundException;
@@ -28,14 +31,16 @@ public class AccountService implements IAccountService {
 
     private final IAccountDao accountDao;
     private final ICurrencyService currencyService;
+    private final IClientService clientService;
     private final UserHolder userHolder;
     private final MoneyOperator moneyOperator;
     private final ModelMapper modelMapper;
 
-    public AccountService(IAccountDao accountDao, ICurrencyService currencyService,
+    public AccountService(IAccountDao accountDao, ICurrencyService currencyService, IClientService clientService,
                           UserHolder userHolder, MoneyOperator moneyOperator, ModelMapper modelMapper) {
         this.accountDao = accountDao;
         this.currencyService = currencyService;
+        this.clientService = clientService;
         this.userHolder = userHolder;
         this.moneyOperator = moneyOperator;
         this.modelMapper = modelMapper;
@@ -58,6 +63,13 @@ public class AccountService implements IAccountService {
         account.setCurrency(currencyId);
 
         accountDao.saveAndFlush(account);
+
+        clientService.toAudit(AuditCreateDTO.builder()
+                .user(userHolder.getUserId())
+                .text("Пользователь создал счёт")
+                .entityId(account.getId())
+                .essenceType(EssenceType.ACCOUNT)
+                .build());
     }
 
     @Override
