@@ -26,7 +26,7 @@ public class UsersController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
-        userService.save(userCreateDTO);
+        userService.create(userCreateDTO);
     }
 
 
@@ -41,7 +41,7 @@ public class UsersController {
     @ResponseStatus(HttpStatus.OK)
     public UserDTO getUser(@PathVariable("uuid") UUID uuid) {
 
-        return userService.getUserInfoById(uuid);
+        return userService.getById(uuid);
     }
 
     @PutMapping("/{uuid}/dt_update/{dt_update}")

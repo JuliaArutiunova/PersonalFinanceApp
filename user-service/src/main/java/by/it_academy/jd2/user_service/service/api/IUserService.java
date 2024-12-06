@@ -16,9 +16,9 @@ public interface IUserService {
 
     PageDTO<UserDTO> getUsersPage(int pageNumber, int size);
 
-    UserDTO getUserInfoById(UUID id);
+    UserDTO getById(UUID id);
 
-    void save(UserCreateDTO userCreateDTO);
+    void create(UserCreateDTO userCreateDTO);
 
     void update(UUID uuid, long dtUpdate, UserCreateDTO userCreateDTO);
 

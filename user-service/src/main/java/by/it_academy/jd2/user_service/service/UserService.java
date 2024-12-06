@@ -78,7 +78,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDTO getUserInfoById(UUID id) {
+    public UserDTO getById(UUID id) {
 
         UserProjection userProjection = userStorage.findUserProjectionByUserId(id).orElseThrow(() ->
                 new RecordNotFoundException("Пользователь не найден"));
@@ -89,7 +89,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public void save(UserCreateDTO userCreateDTO) {
+    public void create(UserCreateDTO userCreateDTO) {
 
         String userMail = userCreateDTO.getMail();
 
