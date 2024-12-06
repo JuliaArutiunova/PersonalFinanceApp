@@ -1,7 +1,7 @@
 package by.it_academy.jd2.classifier_service.service;
 
 import by.it_academy.jd2.classifier_service.service.api.IClientService;
-import by.it_academy.lib.dto.AuditDTO;
+import by.it_academy.lib.dto.AuditCreateDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,8 @@ public class ClientService implements IClientService {
     private String accountCurrencyUrl;
     @Value("${client.account-service.operation-category.url}")
     private String accountOperationCategoryUrl;
+    @Value("${client.audit-service.url}")
+    private String auditUrl;
 
 
     private final WebClient webClient;
@@ -48,6 +50,18 @@ public class ClientService implements IClientService {
                 .uri(url)
                 .retrieve()
                 .bodyToMono(Void.class).block();
+    }
+
+    @Override
+    public void toAudit(AuditCreateDTO auditCreateDTO) {
+        webClient.post()
+                .uri(auditUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(auditCreateDTO)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .subscribe();
+
     }
 
 }
