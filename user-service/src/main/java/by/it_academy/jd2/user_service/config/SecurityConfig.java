@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/cabinet/login").permitAll()
                         .requestMatchers("/cabinet/verification").permitAll()
                         .requestMatchers("/cabinet/registration").anonymous()
+                        .requestMatchers("/users_data").permitAll()
                         .anyRequest().authenticated()
 
         );
